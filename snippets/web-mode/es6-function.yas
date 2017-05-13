@@ -1,0 +1,10 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: es6-function
+# key: f
+# binding: direct-keybinding
+# expand-env: ((yas-indent-line 'fixed) (yas-wrap-around-region 'nil))
+# contributor: Chris Biscardi <chris@christopherbiscardi.com>
+# --
+($1) {
+  $0
+}

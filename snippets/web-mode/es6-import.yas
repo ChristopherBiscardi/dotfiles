@@ -1,0 +1,10 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: es6-import
+# key: i
+# binding: direct-keybinding
+# expand-env: ((yas-indent-line 'fixed) (yas-wrap-around-region 'nil))
+# contributor: Chris Biscardi <chris@christopherbiscardi.com>
+# --
+
+import $1 from '$2';
+$0

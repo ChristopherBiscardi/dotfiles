@@ -1,0 +1,9 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: code-block
+# key: ```
+# binding: direct-keybinding
+# contributor: Chris Biscardi <chris@christopherbiscardi.com>
+# --
+```${1:javascript}
+$0
+```

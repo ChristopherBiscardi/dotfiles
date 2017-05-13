@@ -1,0 +1,7 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: img
+# key: i
+# binding: direct-keybinding
+# contributor: Chris Biscardi <chris@christopherbiscardi.com>
+# --
+![${1:Alt Text}][$2] $0

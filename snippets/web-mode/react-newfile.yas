@@ -1,0 +1,20 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: reactnewfile
+# key: r
+# binding: direct-keybinding
+# expand-env: ((yas-indent-line 'fixed) (yas-wrap-around-region 'nil))
+# contributor: Chris Biscardi <chris@christopherbiscardi.com>
+# --
+import React, { Component, PropTypes } from 'react';
+
+export default class $1 extends Component {
+  static propTypes = {
+    $2
+  }
+
+  render() {
+    return (
+      ${0:<div>rawr</div>}
+    )
+  }
+}

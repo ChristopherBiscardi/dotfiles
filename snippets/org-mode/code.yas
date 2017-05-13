@@ -1,0 +1,10 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: code
+# key: ```
+# binding: direct-keybinding
+# expand-env: ((yas-indent-line 'fixed) (yas-wrap-around-region 'nil))
+# contributor: Chris Biscardi <chris@christopherbiscardi.com>
+# --
+#+begin_${1:lang} ${2:options}
+$0
+#+end_$1

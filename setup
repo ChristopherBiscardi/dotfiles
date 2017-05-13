@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+DOTFILES=~/Dropbox/dotfiles
+mkdir ~/bin
+
+ln -s $DOTFILES/emacs.d ~/emacs.d
+ln -s $DOTFILES/bak.zshrc ~/.zshrc
+#ln -s $DOTFILES/atom ~/.atom
+
+git config --global core.excludesfile ~/$DROPBOX/dotfiles/global_gitignore
+# git lg
+git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+# git ll
+git config --global alias.ll "log --pretty=format:'%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]' --decorate --numstat"
+
+# Better diffs (comes from git contrib scripts)
+git config --global pager.log 'diff-highlight | less'
+git config --global pager.show 'diff-highlight | less'
+git config --global pager.diff 'diff-highlight | less'
+git config --global interactive.diffFilter diff-highlight
+curl https://raw.githubusercontent.com/git/git/master/contrib/diff-highlight/diff-highlight > ~/bin/diff-highlight && chmod +x ~/bin/diff-highlight
+
+# zsh-autosuggest plugin
+git clone git://github.com/zsh-users/zsh-autosuggestions $ZSH_CUSTOM/plugins/zsh-autosuggestions
+
+# Homebrew packages
+brew install ack brew-cask cloc elixir emacs erlang ffmpeg ghi git go hub leiningen mtr ngrok redis sbcl tsung weechat wget peco
+brew cask install aerial

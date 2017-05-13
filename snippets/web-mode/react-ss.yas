@@ -1,0 +1,11 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: react-setState
+# key: ss
+# binding: direct-keybinding
+# expand-env: ((yas-indent-line 'fixed) (yas-wrap-around-region 'nil))
+# contributor: Chris Biscardi <chris@christopherbiscardi.com>
+# --
+
+this.setState({
+  ${1:key}: $0
+});
