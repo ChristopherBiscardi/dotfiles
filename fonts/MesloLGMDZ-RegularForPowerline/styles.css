@@ -1,0 +1,8 @@
+
+@font-face {
+  font-family: 'MesloLGMDZ-RegularForPowerline';
+  src: url('MesloLGMDZ-RegularForPowerline.eot?#iefix') format('embedded-opentype'),  url('MesloLGMDZ-RegularForPowerline.otf')  format('opentype'),
+	     url('MesloLGMDZ-RegularForPowerline.woff') format('woff'), url('MesloLGMDZ-RegularForPowerline.ttf')  format('truetype'), url('MesloLGMDZ-RegularForPowerline.svg#MesloLGMDZ-RegularForPowerline') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
