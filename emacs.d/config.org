@@ -51,12 +51,23 @@
   ;; (if (display-graphic-p)
   ;;     (setq ns-use-srgb-colorspace nil))
 
-  (load-theme 'icy-gui t)
-  (load-theme 'icy t)
+  ;; (defun load-icy-theme (frame)
+  ;;   "load custom icy theme"
+  ;;   (progn
+  ;;     (message "%s" "load icy")
+  ;;     (message "framep; %s" (eq (framep frame) 'ns))
+  ;;     (if (eq (framep frame) 'ns)
+  ;;         (load-theme 'icy-hex-gui t)
+  ;;       (load-theme 'icy t))))
+
+  ;; (if (or (display-graphic-p) (eq (framep (selected-frame)) 'ns))
+  ;;     (progn (message "%s" "loading icy-gui first") (load-theme 'icy-hex-gui t))
+  ;;   (progn (message "%s" "loading icy first") (load-theme 'icy)))
+
+  ;; turns out, just using a single theme is easier
+  (load-theme 'icy-hex-gui t)
   ;; (if (daemonp)
-  ;;     (add-hook 'after-make-frame-functions #'load-icy-theme)
-  ;;   (load-theme 'icy-gui t)
-  ;;   (load-theme 'icy t))
+  ;;     (add-hook 'after-make-frame-functions #'load-icy-theme))
 #+END_SRC
 ** powerline
    #+BEGIN_SRC emacs-lisp
