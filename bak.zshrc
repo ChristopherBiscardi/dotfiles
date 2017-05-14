@@ -21,11 +21,12 @@ alias v="/usr/local/Cellar/vim/*/bin/vim"
 alias weechat="/usr/local/Cellar/weechat/*/bin/weechat-curses"
 alias gups="git pull --rebase upstream master"
 alias curl="/usr/local/Cellar/curl/*/bin/curl"
+alias emacsdaemon="/usr/local/Cellar/emacs/25.1/Emacs.app/Contents/MacOS/Emacs --daemon"
 e() {
     # spawn emacs in the background and disown the process
     # useful for launching GUI emacs and not having it crash
     # after closing an iTerm2 window
-    emacs $@ &
+    emacsclient -c $@ &
     # disown will reference the last PID by default
     disown
 }
