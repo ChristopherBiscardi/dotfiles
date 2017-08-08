@@ -14,15 +14,37 @@ git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Crese
 git config --global alias.ll "log --pretty=format:'%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]' --decorate --numstat"
 
 # Better diffs (comes from git contrib scripts)
-git config --global pager.log 'diff-highlight | less'
-git config --global pager.show 'diff-highlight | less'
-git config --global pager.diff 'diff-highlight | less'
-git config --global interactive.diffFilter diff-highlight
-curl https://raw.githubusercontent.com/git/git/master/contrib/diff-highlight/diff-highlight > ~/bin/diff-highlight && chmod +x ~/bin/diff-highlight
+# swap diff-highlight for diff-so-fancy
+#git config --global pager.log 'diff-highlight | less'
+#git config --global pager.show 'diff-highlight | less'
+#git config --global pager.diff 'diff-highlight | less'
+# git config --global interactive.diffFilter diff-highlight
+#curl https://raw.githubusercontent.com/git/git/master/contrib/diff-highlight/diff-highlight > ~/bin/diff-highlight && chmod +x ~/bin/diff-highlight
 
 # zsh-autosuggest plugin
 git clone git://github.com/zsh-users/zsh-autosuggestions $ZSH_CUSTOM/plugins/zsh-autosuggestions
 
 # Homebrew packages
-brew install ack brew-cask cloc elixir emacs erlang ffmpeg ghi git go hub leiningen mtr ngrok redis sbcl tsung weechat wget peco
-brew cask install aerial
+brew install ack cloc elixir emacs erlang ffmpeg ghi git go hub leiningen mtr redis sbcl tsung weechat wget peco
+brew cask install aerial ngrok
+
+npm i -g spaceship-zsh-theme diff-so-fancy
+
+# use diff-so-fancy for git diffs
+git config --global core.pager "diff-so-fancy | less --tabs=4 -RFX"
+
+# diff-so-fancy suggested colors
+# https://github.com/so-fancy/diff-so-fancy/tree/ed8cf1763d38bdd79ceb55a73b9ce7e30f1e184d#improved-colors-for-the-highlighted-bits
+git config --global color.ui true
+
+git config --global color.diff-highlight.oldNormal "red bold"
+git config --global color.diff-highlight.oldHighlight "red bold 52"
+git config --global color.diff-highlight.newNormal "green bold"
+git config --global color.diff-highlight.newHighlight "green bold 22"
+
+git config --global color.diff.meta "227"
+git config --global color.diff.frag "magenta bold"
+git config --global color.diff.commit "227 bold"
+git config --global color.diff.old "red bold"
+git config --global color.diff.new "green bold"
+git config --global color.diff.whitespace "red reverse"
