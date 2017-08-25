@@ -1,5 +1,5 @@
 ZSH=$HOME/.oh-my-zsh
-ZSH_THEME="agnoster"
+ZSH_THEME="spaceship"
 
 # Source private aliases, etc
 source ~/.zshrc-priv
@@ -13,7 +13,7 @@ export ORG=$DROPBOX/__notes/_org
 
 DOTFILES=$DROPBOX/dotfiles
 
-plugins=(git brew cabal docker encode64 npm osx pod)
+plugins=(git brew docker encode64 npm osx alias-tips zsh-kubernetes zsh-peco-history)
 source $ZSH/oh-my-zsh.sh
 
 # Aliases
@@ -62,6 +62,10 @@ alias snap-for-beginners="cd $PUBLISH/snap-for-beginners"
 export PATH="$PATH:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:$HOME/.local/bin"
 # yarn (npm replacement)
 export PATH="$HOME/.yarn/bin:$PATH"
+yarn-latest() {
+    yarn info $1 --json | jq '.data."dist-tags".latest'
+}
+# manual bin
 export PATH="$HOME/bin:$PATH"
 ## homebrew
 export PATH="/usr/local/sbin:$PATH"
@@ -72,6 +76,7 @@ export PATH="$HOME/Library/Android/sdk/tools:$HOME/Library/Android/sdk/platform-
 export ANDROID_HOME=/Users/chris/Library/Android/sdk/
 
 [[ -s $HOME/.nvm/nvm.sh ]] && . $HOME/.nvm/nvm.sh  # This loads NVM
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 ### GO
 export GOPATH=$HOME/go
@@ -142,20 +147,10 @@ if test -f ~/.gnupg/.gpg-agent-info -a -n "$(pgrep gpg-agent)"; then
     source ~/.gnupg/.gpg-agent-info
     export GPG_AGENT_INFO
 else
-    eval $(gpg-agent --daemon --write-env-file ~/.gnupg/.gpg-agent-info)
+    eval $(gpg-agent --daemon ~/.gnupg/.gpg-agent-info)
 fi
 
-## Graveyard
+source "/Users/biscarch/.oh-my-zsh/custom/themes/spaceship.zsh-theme"
 
-# m() {
-#   VERSION=${1-latest}
-#   docker run -it --rm \
-#   -v `pwd`:/opt/code \
-#   -e CABAL_SANDBOX_CONFIG=/opt/sandbox/docker-sandbox \
-#   -v `pwd`/.musl-sandboxes/$VERSION/:/opt/sandbox/ \
-#   --workdir /opt/code \
-#   nilcons/ghc-musl:$VERSION bash
-# }
-
-
-export PATH="~/.yarn/bin:$PATH"
+## pyenv `brew install pyenv`
+eval "$(pyenv init -)"

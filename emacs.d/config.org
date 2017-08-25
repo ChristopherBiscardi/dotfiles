@@ -6,12 +6,12 @@
                  '("marmalade" . "http://marmalade-repo.org/packages/"))
     (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
   #+END_SRC
-** Manually managed dependencies
+** COMMENT Manually managed dependencies
   #+BEGIN_SRC emacs-lisp
     ;(add-to-list 'load-path "~/.emacs.d/manually/shm/elisp")
     ;(add-to-list 'load-path "~/.emacs.d/manually/js3-mode")
     (add-to-list 'load-path "~/.emacs.d/manually/column-enforce-mode")
-    (add-to-list 'load-path "~/.emacs.d/manually/prettier-js")
+    ;(add-to-list 'load-path "~/.emacs.d/manually/prettier-js")
     (package-initialize)
   #+END_SRC
 ** require Common Lisp, request and json
@@ -148,8 +148,8 @@
   #+END_SRC
 *** Ubiquitous ido
   #+BEGIN_SRC emacs-lisp
-  (require 'ido-ubiquitous)
-  (ido-ubiquitous)
+  (require 'ido-completing-read+)
+  (ido-ubiquitous-mode 1)
   #+END_SRC
 ** ack
   #+BEGIN_SRC emacs-lisp
@@ -467,6 +467,15 @@
 *** prettier-js
 #+BEGIN_SRC emacs-lisp
   (require 'prettier-js)
+  (add-hook 'web-mode-hook 'prettier-js-mode)
+  ;; (defun enable-minor-mode (my-pair)
+  ;;   "Enable minor mode if filename match the regexp.  MY-PAIR is a cons cell (regexp . minor-mode)."
+  ;;   (if (buffer-file-name)
+  ;;       (if (string-match (car my-pair) buffer-file-name)
+  ;;           (funcall (cdr my-pair)))))
+  ;; (add-hook 'web-mode-hook #'(lambda ()
+  ;;                             (enable-minor-mode
+  ;;                              '("\\.jsx?\\'" . prettier-js-mode))))
 #+END_SRC
 ** TypeScript
    #+BEGIN_SRC emacs-lisp
@@ -515,6 +524,12 @@
     (add-hook 'scheme-mode-hook           #'enable-paredit-mode)
     (add-hook 'clojure-mode-hook 'paredit-mode)
   #+END_SRC
+** SQL
+#+BEGIN_SRC emacs-lisp
+  (when (require 'sql-upcase nil :noerror)
+     (add-hook 'sql-mode-hook 'sql-upcase-mode)
+     (add-hook 'sql-interactive-mode-hook 'sql-upcase-mode))
+#+END_SRC
 * Custom Code
 * File Associations
   #+BEGIN_SRC emacs-lisp

@@ -3,7 +3,7 @@
 
 (custom-theme-set-faces
  'icy-hex-gui
- '(default ((t (:family "Meslo LG L DZ for Powerline" :foundry "default" :width normal :height 1 :weight normal :slant normal :underline nil :overline nil :strike-through nil :box nil :inverse-video nil :foreground "white" :background "#002833" :stipple nil :inherit nil))))
+ '(default ((t (:family "Meslo LG M DZ for Powerline" :foundry "default" :width normal :height 1 :weight normal :slant normal :underline nil :overline nil :strike-through nil :box nil :inverse-video nil :foreground "white" :background "#002833" :stipple nil :inherit nil))))
  '(cursor ((((background light)) (:background "#003541")) (((background dark)) (:background "white"))))
  '(fixed-pitch ((t (:family "Monospace"))))
  '(variable-pitch ((t (:family "Sans Serif"))))
