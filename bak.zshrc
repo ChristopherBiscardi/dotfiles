@@ -80,7 +80,7 @@ export ANDROID_HOME=/Users/chris/Library/Android/sdk/
 
 ### GO
 export GOPATH=$HOME/go
-
+export PATH="$GOPATH/bin:$PATH"
 ### Prompt:
 
 prompt_context() {
