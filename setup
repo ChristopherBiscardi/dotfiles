@@ -28,7 +28,9 @@ git clone git@github.com:Dbz/zsh-kubernetes.git $ZSH_CUSTOM/plugins/zsh-kubernet
 git clone https://github.com/jimeh/zsh-peco-history.git $ZSH_CUSTOM/plugins/zsh-peco-history
 
 # Homebrew packages
-brew install ack cloc elixir emacs erlang ffmpeg ghi git go hub leiningen mtr redis sbcl tsung weechat wget peco
+brew install ack cloc elixir emacs erlang ffmpeg ghi git go hub leiningen mtr redis sbcl tsung weechat wget peco fzf
+/usr/local/opt/fzf/install
+
 brew cask install aerial ngrok
 
 npm i -g spaceship-zsh-theme diff-so-fancy

@@ -13,14 +13,14 @@ export ORG=$DROPBOX/__notes/_org
 
 DOTFILES=$DROPBOX/dotfiles
 
-plugins=(git brew docker encode64 npm osx alias-tips zsh-kubernetes zsh-peco-history)
+plugins=(git brew docker encode64 npm osx alias-tips zsh-kubernetes )
 source $ZSH/oh-my-zsh.sh
 
 # Aliases
 alias v="/usr/local/Cellar/vim/*/bin/vim"
 alias weechat="/usr/local/Cellar/weechat/*/bin/weechat-curses"
 alias gups="git pull --rebase upstream master"
-alias curl="/usr/local/Cellar/curl/*/bin/curl"
+#alias curl="/usr/local/Cellar/curl/*/bin/curl"
 alias emacsdaemon="/usr/local/Cellar/emacs/25.1/Emacs.app/Contents/MacOS/Emacs --daemon"
 e() {
     # spawn emacs in the background and disown the process
@@ -46,6 +46,16 @@ di() {
 ## Git
 alias git="hub"
 alias s="git status -sb"
+
+## jq
+yarn-get-deps() {
+    # Get dependecies from package.json on a single line
+    jq --raw-output '.dependencies | keys  | reduce .[] as $item (""; . + " " + $item)' $0
+}
+create-presentation() {
+    echo $1
+    create-react-app "$1" --scripts-version spectacle-scripts 
+}
 
 ## Projects
 alias proj="$PROJ"
@@ -154,3 +164,5 @@ source "/Users/biscarch/.oh-my-zsh/custom/themes/spaceship.zsh-theme"
 
 ## pyenv `brew install pyenv`
 eval "$(pyenv init -)"
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

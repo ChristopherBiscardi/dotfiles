@@ -37,7 +37,7 @@
     ("8a1838fb11e490480372d3206c0544a47f9d940086d5d841118407c90e011e8a" "75eda3e5280114712ccb579b1cad7489e475c5e581210ac08284bf23ef9b5622" "70dc67bc0ced08fb0e64a721879c0f59f8785ce2019057f16e96054294254121" default)))
  '(package-selected-packages
    (quote
-    (sqlup-mode format-sql prettier-js helm-ag helm-swoop rust-mode flycheck sass-mode coffee-mode tide typescript-mode mode-icons all-the-icons yaml-mode web-mode web-beautify visual-regexp-steroids undo-tree syslog-mode smex simpleclip shm rich-minority rainbow-mode rainbow-delimiters purescript-mode projectile powerline paredit org-bullets notify neotree multiple-cursors minimap markdown-mode magit less-css-mode kooten-theme keyfreq intero idris-mode ido-vertical-mode ido-ubiquitous hindent haskell-snippets go-mode git-rebase-mode git-commit-mode gist full-ack flycheck-haskell flx-ido elm-mode ein dracula-theme company-restclient company-ghc company-cabal cmm-mode ace-window)))
+    (flycheck-gometalinter sqlup-mode format-sql prettier-js helm-ag helm-swoop rust-mode flycheck sass-mode coffee-mode tide typescript-mode mode-icons all-the-icons yaml-mode web-mode web-beautify visual-regexp-steroids undo-tree syslog-mode smex simpleclip shm rich-minority rainbow-mode rainbow-delimiters purescript-mode projectile powerline paredit org-bullets notify neotree multiple-cursors minimap markdown-mode magit less-css-mode kooten-theme keyfreq intero idris-mode ido-vertical-mode ido-ubiquitous hindent haskell-snippets go-mode git-rebase-mode git-commit-mode gist full-ack flycheck-haskell flx-ido elm-mode ein dracula-theme company-restclient company-ghc company-cabal cmm-mode ace-window)))
  '(powerline-default-separator (quote slant)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
