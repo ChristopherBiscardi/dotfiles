@@ -40,7 +40,7 @@ alias dk="docker kill"
 ## "ssh" into docker4mac
 alias d4m="docker run -it --privileged --pid=host debian nsenter -t 1 -m -u -n -i sh"
 di() {
-    docker images | peco | awk '{print $3}'
+    docker images | fzf | awk '{print $3}'
 }
 
 ## Git
