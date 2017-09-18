@@ -1,29 +1,27 @@
-# piggybacking off mlaventure's emacs config redo
-# https://github.com/mlaventure/emacs-config/blob/master/.emacs.d/config.org
-* Packages
+* Intro
+piggybacking off mlaventure's emacs config redo
+https://github.com/mlaventure/emacs-config/blob/master/.emacs.d/config.org
+* Package Management
 This section has to be first, otherwise required packages won't be
 able to be installed and loaded
-
-- Who doesn't like a package manager? Noone, so always load it up.
+** Package Manager
   #+BEGIN_SRC emacs-lisp
     (require 'package)
     (add-to-list 'package-archives
                  '("melpa" . "http://melpa.milkbox.net/packages/") t)
+    (package-initialize)
   #+END_SRC
-- We want to be able to setup those package early, so initialize them
-  all
-  #+BEGIN_SRC emacs-lisp
-  ;;  (package-initialize)
-  #+END_SRC
-- Refresh the package list content if if doesn't exist yet (so only
+** Refresh Package Archive
+Refresh the package list content if if doesn't exist yet (so only
   done the first time this configuration is loaded). We don't want to
   do it at every start, it would slow us down too much
   #+BEGIN_SRC emacs-lisp
     (unless package-archive-contents
       (package-refresh-contents))
   #+END_SRC
-- Here we define a handy helper that will install a package if it's
-  not yet present then require it
+** Activate-Package Helper (from mlaventure)
+Here we define a handy helper that will install a package if it's
+not yet present then require it
   #+BEGIN_SRC emacs-lisp
     (defun activate-package (pkg)
       "Install a package if it is not present then require it"
@@ -31,13 +29,15 @@ able to be installed and loaded
         (package-install pkg))
       (require pkg))
   #+END_SRC
-- Let's try and make use of [[https://github.com/jwiegley/use-package][use-package]]. And set it to always install
-  packages if they're not present.
+** use-package
+Let's try and make use of [[https://github.com/jwiegley/use-package][use-package]]. And set it to always install
+packages if they're not present.
   #+BEGIN_SRC emacs-lisp
     (activate-package 'use-package)
     (setq use-package-always-ensure t)
   #+END_SRC
-- Use auto-compile to always get up-to-date compiled packages
+** auto-compile
+Use auto-compile to always get up-to-date compiled packages
   #+BEGIN_SRC emacs-lisp
     (use-package auto-compile
                  :init
@@ -72,16 +72,8 @@ able to be installed and loaded
   (add-hook 'org-shiftleft-final-hook 'windmove-left)
   (add-hook 'org-shiftdown-final-hook 'windmove-down)
   (add-hook 'org-shiftright-final-hook 'windmove-right)
-  ; rainbow-delimiters
-  (show-paren-mode t)
-  (use-package rainbow-delimiters)
-  (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
   ; highlight current line
   (global-hl-line-mode t)
-  ; rainbow representations of hex/etc colors
-  (add-hook 'less-mode-hook 'rainbow-mode)
-  (add-hook 'sass-mode-hook 'rainbow-mode)
-  (add-hook 'web-mode-hook 'rainbow-mode)
   ; no tabs (only spaces)
   (setq-default indent-tabs-mode nil)
   ; enforce 80 column rule
@@ -90,17 +82,16 @@ able to be installed and loaded
   (setq shell-file-name "zsh")
   (setq shell-command-switch "-ic")
   ; simpleclip
-  (simpleclip-mode 1)
+  (use-package simpleclip
+    :init
+    (setq simpleclip-mode 1))
   ; camelCase navigation
   (global-subword-mode t)
   ; Teach emacs to accept =y= and =n= for =yes= and =no=.
   (fset 'yes-or-no-p 'y-or-n-p)
+  ; (C-z) Don't suspend on C-z. I do this too often.
+  (global-unset-key (kbd "C-z"))
 #+END_SRC
-** spaceline
-   #+BEGIN_SRC emacs-lisp
-     (require 'spaceline-config)
-     (spaceline-spacemacs-theme)
-   #+END_SRC
 ** Saves
    Make Saves go in another directory
    Make more of them
@@ -114,21 +105,27 @@ able to be installed and loaded
   #+END_SRC
 ** YASnippets
   #+BEGIN_SRC emacs-lisp
-    (setq yas-snippet-dirs
-          '("~/.emacs.d/snippets" ;; personal snippets
-           ))
-    (yas-global-mode 1)
+    (use-package yasnippet
+      :diminish yas-minor-mode
+      :defer (yas-global-mode)
+      :config
+      (setq yas-snippet-dirs
+            '("~/.emacs.d/snippets" ;; snippets from git repo
+              )))
   #+END_SRC
 ** KeyFreq
    #+BEGIN_SRC emacs-lisp
-     (require 'keyfreq)
-     (setq keyfreq-excluded-commands
+     (use-package keyfreq
+       :ensure t
+       :init (keyfreq-mode 1)
+     (keyfreq-autosave-mode 1)
+       :config
+       (setq keyfreq-excluded-commands
            '(self-insert-command
              abort-recursive-edit
              previous-line
-             next-line))
-     (keyfreq-mode 1)
-     (keyfreq-autosave-mode 1)
+             next-line)))
+
    #+END_SRC
 ** NeoTree
    #+BEGIN_SRC emacs-lisp
@@ -148,50 +145,91 @@ able to be installed and loaded
                      text-mode-hook))
        (add-hook hook (lambda () (abbrev-mode 1))))  
    #+END_SRC
-** undo-tree
+* Modes
+** spaceline
    #+BEGIN_SRC emacs-lisp
-     (global-undo-tree-mode)
-     (setq undo-tree-visualizer-diff t)
-   #+END_
-* Visual Regexp
+     (use-package spaceline-config
+       :ensure spaceline
+       :config
+       (spaceline-emacs-theme))
+     (use-package spaceline-all-the-icons
+       :after spaceline
+       :config (spaceline-all-the-icons-theme))
+   #+END_SRC
+** Visual Regexp
 #+BEGIN_SRC emacs-lisp
-  (define-key global-map (kbd "C-c r") 'vr/replace)
-  (define-key global-map (kbd "C-c q") 'vr/query-replace)
-
-  ;; if you use multiple-cursors, this is for you:
-  ;(define-key global-map (kbd "C-c m") 'vr/mc-mark)
-
-  ;; to use visual-regexp-steroids's isearch instead of the built-in regexp isearch, also include the following lines:
-  (define-key esc-map (kbd "C-r") 'vr/isearch-backward) ;; C-M-r
-  (define-key esc-map (kbd "C-s") 'vr/isearch-forward) ;; C-M-s
+  (use-package visual-regexp
+    :bind (("C-c r" . vr/replace)
+           ("C-c q" . vr/query-replace)))
+  (use-package visual-regexp-steroids
+    :bind
+    ;; to use visual-regexp-steroids's isearch instead of the
+    ;; built-in regexp isearch, also include the following lines:
+    ("C-r" . vr/isearch-backward)
+    ("C-s" . vr/isearch-forward))
 #+END_SRC
-* Keybindings
-*** (C-z) Don't suspend on C-z. I do this too often.
+** Avy (previously Ace-Jump-Mode)
   #+BEGIN_SRC emacs-lisp
-  (global-unset-key (kbd "C-z"))
+    (use-package avy
+      :init (avy-setup-default)
+      :bind (("C-c SPC" . avy-goto-char)
+             ("M-g g" . avy-goto-line)
+             ("M-g e" . avy-goto-word-0)
+             ("M-g w" . avy-goto-word-1)))
+
   #+END_SRC
-*** Avy (previously Ace-Jump-Mode)
-  #+BEGIN_SRC emacs-lisp
-    (avy-setup-default)
-    (global-set-key (kbd "C-c SPC") 'avy-goto-char)
-    (global-set-key (kbd "M-g g") 'avy-goto-line)
-    (global-set-key (kbd "M-g e") 'avy-goto-word-0)
-    (global-set-key (kbd "M-g w") 'avy-goto-word-1)
-  #+END_SRC
-*** ace-window
+** ace-window
     #+BEGIN_SRC emacs-lisp
-      (global-set-key (kbd "C-x o") 'ace-window)
+      (use-package ace-window
+        :bind ("C-x o" . ace-window))
     #+END_SRC
-*** (M-x) smex
+** (M-x) smex
   #+BEGIN_SRC emacs-lisp
-  (autoload 'smex "smex"
-    "Smex is a M-x enhancement for Emacs, it provides a convenient interface to your recently and most frequently used commands.")
-  (global-set-key (kbd "M-x") 'smex)
+    ;(autoload 'smex "smex" "Smex is a M-x enhancement for Emacs, it provides a convenient interface to your recently and most frequently used commands.")
+    ;(global-set-key (kbd "M-x") 'smex)
   #+END_SRC
+** Rainbow Mode
+#+BEGIN_SRC emacs-lisp
+  (show-paren-mode t)
+  (use-package rainbow-delimiters
+    :config (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
+  (use-package rainbow-mode
+    :config (progn
+    ; rainbow representations of hex/etc colors
+    (add-hook 'less-mode-hook 'rainbow-mode)
+    (add-hook 'sass-mode-hook 'rainbow-mode)
+    (add-hook 'web-mode-hook 'rainbow-mode)))
+#+END_SRC
 * Org-mode
-  #+BEGIN_SRC emacs-lisp
-    (require 'org)
-  #+END_SRC
+#+BEGIN_SRC emacs-lisp
+  (use-package org
+    :config
+    (progn
+      (set 'my-orgdir "~/Dropbox/__notes/_org")
+      (setq org-src-fontify-natively t
+            org-agenda-files (list (concat my-orgdir "/personal.org"))
+            org-default-notes-file (concat my-orgdir "/notes.org")
+            org-capture-templates
+            '(("t" "Todo" entry (file+headline (concat my-orgdir "/todo.org") "Tasks")
+               "* TODO %?\n  %i\n  %a")
+              ("j" "Journal" entry (file+datetree (concat my-orgdir "/journal.org"))
+               "* %?\nEntered on %U\n  %i\n  %a"))))
+    :bind ("\C-cc" . org-capture))
+
+  (use-package org-bullets
+    :config (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+    :init (setq org-hide-leading-stars t
+                org-ellipsis " \u25bc"))
+
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((dot . t)
+     (emacs-lisp . t)
+     (awk . t)
+     (haskell . t)
+     (css . t)
+     (js . t)))
+#+END_SRC
 ** org-capture-alfred
 #+BEGIN_SRC emacs-lisp
   (defun make-orgcapture-frame ()
@@ -204,59 +242,6 @@ able to be installed and loaded
     (select-frame-by-name "remember")
     (org-capture))
 #+END_SRC
-** setq
-   #+BEGIN_SRC emacs-lisp
-     (set 'my-orgdir "~/Dropbox/__notes/_org")
-     (setq org-src-fontify-natively t)
-     (setq org-agenda-files (list (concat my-orgdir "/personal.org")))
-     (setq org-default-notes-file (concat my-orgdir "/notes.org"))
-     (define-key global-map "\C-cc" 'org-capture)
-     (setq org-capture-templates
-           '(("t" "Todo" entry (file+headline (concat my-orgdir "/todo.org") "Tasks")
-              "* TODO %?\n  %i\n  %a")
-             ("j" "Journal" entry (file+datetree (concat my-orgdir "/journal.org"))
-              "* %?\nEntered on %U\n  %i\n  %a")))
-   #+END_SRC
-** Langs
-  #+BEGIN_SRC emacs-lisp
-    (org-babel-do-load-languages
-     'org-babel-load-languages
-     '((dot . t)
-       (emacs-lisp . t)
-       (awk . t)
-       (haskell . t)
-       (css . t)
-       (js . t)))
-  #+END_SRC
-** theme
-  #+BEGIN_SRC emacs-lisp
-    (require 'org-bullets)
-    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-    (setq org-hide-leading-stars t)
-    (setq org-ellipsis " \u25bc")
-  #+END_SRC
-* Flycheck
-** boot it
-  #+BEGIN_SRC emacs-lisp
-    (require 'flycheck)
-    (add-hook 'after-init-hook #'global-flycheck-mode)
-    ;; turn on flychecking globally
-    (add-hook 'after-init-hook #'global-flycheck-mode)
-
-    ;; disable jshint since we prefer eslint checking
-    (setq-default flycheck-disabled-checkers
-                  (append flycheck-disabled-checkers
-                          '(javascript-jshint)))
-
-    ;; use eslint with web-mode for jsx files
-    (setq flycheck-checkers '(javascript-eslint))
-    (flycheck-add-mode 'javascript-eslint 'web-mode)
-
-    ;; disable json-jsonlist checking for json files
-    (setq-default flycheck-disabled-checkers
-                  (append flycheck-disabled-checkers
-                          '(json-jsonlist)))
-  #+END_SRC
 * Magit
   #+BEGIN_SRC emacs-lisp
     (global-set-key (kbd "C-x g") 'magit-status)
@@ -417,8 +402,9 @@ able to be installed and loaded
 #+END_SRC
 *** prettier-js
 #+BEGIN_SRC emacs-lisp
-  (require 'prettier-js)
-  (add-hook 'web-mode-hook 'prettier-js-mode)
+  (use-package prettier-js
+    :config (add-hook 'web-mode-hook 'prettier-js-mode)
+  )
   ;; (defun enable-minor-mode (my-pair)
   ;;   "Enable minor mode if filename match the regexp.  MY-PAIR is a cons cell (regexp . minor-mode)."
   ;;   (if (buffer-file-name)
@@ -430,30 +416,30 @@ able to be installed and loaded
 #+END_SRC
 ** TypeScript
    #+BEGIN_SRC emacs-lisp
-     (defun setup-tide-mode ()
-       (interactive)
-       (tide-setup)
-       (flycheck-mode +1)
-       (setq flycheck-check-syntax-automatically '(save mode-enabled))
-       (eldoc-mode +1)
-       (tide-hl-identifier-mode +1)
+     ;(defun setup-tide-mode ()
+     ;  (interactive)
+     ;  (tide-setup)
+     ;  (flycheck-mode +1)
+     ;  (setq flycheck-check-syntax-automatically '(save mode-enabled))
+     ;  (eldoc-mode +1)
+     ;  (tide-hl-identifier-mode +1)
        ;; company is an optional dependency. You have to
        ;; install it separately via package-install
        ;; `M-x package-install [ret] company`
-       (company-mode +1))
+     ;  (company-mode +1))
 
      ;; formats the buffer before saving
-     (add-hook 'before-save-hook 'tide-format-before-save)
+     ;(add-hook 'before-save-hook 'tide-format-before-save)
 
-     (add-hook 'typescript-mode-hook #'setup-tide-mode)
+     ;(add-hook 'typescript-mode-hook #'setup-tide-mode)
 
      ;; format options
-     (setq tide-format-options '(:indentSize 2 :tabSize 2 :placeOpenBraceOnNewLineForControlBlocks nil))
+     ;(setq tide-format-options '(:indentSize 2 :tabSize 2 :placeOpenBraceOnNewLineForControlBlocks nil))
 
-     (add-hook 'web-mode-hook
-               (lambda ()
-                 (when (string-equal "tsx" (file-name-extension buffer-file-name))
-                   (setup-tide-mode))))
+     ;(add-hook 'web-mode-hook
+     ;          (lambda ()
+     ;            (when (string-equal "tsx" (file-name-extension buffer-file-name))
+     ;              (setup-tide-mode))))
    #+END_SRC
 ** Lisp
 *** Slime
@@ -466,6 +452,8 @@ able to be installed and loaded
 #+END_SRC
 *** Paredit
   #+BEGIN_SRC emacs-lisp
+    (use-package paredit
+      :config (progn
     (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
     (add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
     (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
@@ -474,6 +462,8 @@ able to be installed and loaded
     (add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
     (add-hook 'scheme-mode-hook           #'enable-paredit-mode)
     (add-hook 'clojure-mode-hook 'paredit-mode)
+    ))
+
   #+END_SRC
 ** SQL
 #+BEGIN_SRC emacs-lisp
@@ -481,7 +471,61 @@ able to be installed and loaded
      (add-hook 'sql-mode-hook 'sql-upcase-mode)
      (add-hook 'sql-interactive-mode-hook 'sql-upcase-mode))
 #+END_SRC
-* Custom Code
+** Golang
+*** go-mode
+Install go-mode and set it up to use =goimports= to format our
+files. go-mode depends on the following tools:
+    - [[github.com/rogpeppe/godef][godef]]
+    - [[golang.org/x/tools/cmd/goimports][goimports]]
+    - [[golang.org/x/tools/cmd/godoc][godoc]]
+    #+BEGIN_SRC emacs-lisp
+      (use-package go-mode
+        :commands (gofmt-before-save)
+        :bind (("C-c C-c" . comment-dwim)
+               :map go-mode-map
+                    ("C-c C-r" . go-remove-unused-imports)
+                    ("M-." . godef-jump))
+        :config
+        (setq gofmt-command "goimports")
+        (add-hook 'before-save-hook   'gofmt-before-save)
+        (add-hook 'go-mode-hook       'column-enforce-mode)
+        (add-hook 'go-mode-hook       (lambda () (flyspell-prog-mode))))
+
+      ;; Install [[https://github.com/syohex/emacs-go-eldoc][go-eldoc]] to see variable, return value and function argument
+      ;; in the echo area. It depends on [[github.com/nsf/gocode][gocode]].
+      (use-package go-eldoc
+        :after go-mode
+        :config
+        (add-hook 'go-mode-hook 'go-eldoc-setup))
+      ;; Activate completion with
+      ;; [[https://github.com/nsf/gocode/tree/master/emacs-company][company-go]]
+      (use-package company-go
+        :after company
+        :config
+        (setq company-idle-delay .1
+              company-echo-delay 0)
+        (add-hook 'go-mode-hook (lambda ()
+                                  (set (make-local-variable
+                                        'company-backends) '(company-go))
+                                  (company-mode))))
+      ;; Use go-guru, it depends on the [[https://godoc.org/golang.org/x/tools/cmd/guru][guru]] tool.
+      (use-package go-guru
+        :after go-mode
+        :commands (go-guru-hl-identifier-mode)
+        :config
+        (define-key go-mode-map (kbd "C-c g") 'go-guru-map)
+        (add-hook 'go-mode-hook 'go-guru-hl-identifier-mode))
+      ;; Make use of
+      ;; [[https://github.com/emacsmirror/godoctor][godoctor.el]], it
+      ;; depends on the [[http://gorefactor.org/][godocotor]] utility 
+      (use-package godoctor
+        :bind (("C-c d r" . godoctor-rename)
+               ("C-c d e" . godoctor-extract)
+               ("C-c d t" . godoctor-toggle)
+               ("C-c d g" . godoctor-godoc)))
+
+    #+END_SRC
+    #+END_SRC
 * File Associations
   #+BEGIN_SRC emacs-lisp
     (add-to-list 'auto-mode-alist '("Dockerfile" . shell-script-mode))
@@ -489,7 +533,6 @@ able to be installed and loaded
     (add-to-list 'auto-mode-alist '("\\.post$" . markdown-mode))
     (add-to-list 'auto-mode-alist '("emacs" . lisp-mode))
     (add-to-list 'auto-mode-alist '("zshrc" . shell-script-mode))
-    (add-to-list 'auto-mode-alist '("\\.purs$" . purescript-mode))
     (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
     (add-to-list 'auto-mode-alist '("\\.scss$" . sass-mode))
     (add-to-list 'auto-mode-alist '("\\.rc$" . restclient-mode))
@@ -549,17 +592,6 @@ between windows)
 
     (add-hook 'prog-mode-hook 'turn-on-smartparens-strict-mode)
   #+END_SRC
-** Prettier mode-line
-We use the cyan [[https://github.com/kuanyui/moe-theme.el][moe-theme]] for our powerline.
-#+BEGIN_SRC emacs-lisp
-  (use-package powerline
-    :config
-    (use-package moe-theme
-      :commands (powerline-moe-theme moe-theme-set-color))
-    (powerline-moe-theme)
-    (moe-theme-set-color 'cyan))
-#+END_SRC
-*** TODO We wanna switch to the more powerful [[https://github.com/TheBB/spaceline][spaceline]] eventually and [[https://github.com/domtronn/spaceline-all-the-icons.el][spaceline-all-the-icons]]
 ** Mode-line customization
 - Better unique filename. We want to see =file|file= and =file|titi=
   when opening =/toto/file= and =/titi/file= instead of =file<x>=.
@@ -603,27 +635,6 @@ We use the cyan [[https://github.com/kuanyui/moe-theme.el][moe-theme]] for our p
     (setq mode-require-final-newline t
           tab-width 4)
   #+END_SRC
-** I like my theme dark
-#+BEGIN_SRC emacs-lisp
-  (custom-set-faces
-   '(default ((t (:inherit nil
-                           :stipple nil
-                           :background "#2e3436"
-                           :foreground "#eeeeec"
-                           :inverse-video nil
-                           :box nil
-                           :strike-through nil
-                           :overline nil
-                           :underline nil
-                           :slant normal
-                           :weight normal
-                           :height 70
-                           :width normal
-                           :foundry "unknown"
-                           :family "DejaVu Sans Mono"))))
-   '(hl-line ((t (:background "steel blue"))))
-   '(idle-highlight ((t (:inherit region :background "tomato")))))
-#+END_SRC
 * Encoding System
 UTF-8 for all the things!
 #+BEGIN_SRC emacs-lisp
@@ -652,10 +663,12 @@ highly annoying, so let's put them somewhere else.
   (use-package undo-tree
     :bind (("<f7>" . undo-tree-visualize))
     :config
-    (setq undo-tree-auto-save-history t)
+    (setq undo-tree-auto-save-history t
+          undo-tree-visualizer-diff t)
     (let ((undo-dir (expand-file-name "undo" user-emacs-directory)))
       (setq undo-tree-history-directory-alist `((".*" . ,undo-dir))))
     (global-undo-tree-mode))
+
 #+END_SRC
 * Helm
 Helm make it easy to filter stuff :). I used [[http://tuhdo.github.io/helm-intro.html][this tutorial]] as an
@@ -681,23 +694,23 @@ We let helm auto-resize from =30%= to =70%= of the frame is
 affecting. We also set it to use the current frame instead of opening
 a whole window for itself.
 #+BEGIN_SRC emacs-lisp
-  (use-package helm
-    :bind (("M-x"         . helm-M-x)
-           ("M-y"         . helm-show-kill-ring)
-           ("C-x b"       . helm-mini)
-           ("C-x C-f"     . helm-find-files)
-           ("C-c h o"     . helm-occur))
-    :config
-    (require 'helm-config)
-    (global-unset-key (kbd "C-x c"))
-    (global-set-key (kbd "C-c h")         'helm-command-prefix)
-    (define-key helm-map (kbd "<tab>")    'helm-execute-persistent-action)
-    (define-key helm-map (kbd "C-z")      'helm-select-action)
-    (helm-mode t)
-    (setq helm-autoresize-max-height 70
-          helm-autoresize-min-height 30
-          helm-split-window-in-side-p t)
-    (helm-autoresize-mode t))
+  ;; (use-package helm
+  ;;   :bind (("M-x"         . helm-M-x)
+  ;;          ("M-y"         . helm-show-kill-ring)
+  ;;          ("C-x b"       . helm-mini)
+  ;;          ("C-x C-f"     . helm-find-files)
+  ;;          ("C-c h o"     . helm-occur))
+  ;;   :config
+  ;;   (require 'helm-config)
+  ;;   (global-unset-key (kbd "C-x c"))
+  ;;   (global-set-key (kbd "C-c h")         'helm-command-prefix)
+  ;;   (define-key helm-map (kbd "<tab>")    'helm-execute-persistent-action)
+  ;;   (define-key helm-map (kbd "C-z")      'helm-select-action)
+  ;;   (helm-mode t)
+  ;;   (setq helm-autoresize-max-height 70
+  ;;         helm-autoresize-min-height 30
+  ;;         helm-split-window-in-side-p t)
+  ;;   (helm-autoresize-mode t))
 #+END_SRC
 * Flyspell
 Let's have some warning when we type things wrong ate
@@ -718,82 +731,31 @@ documentation)
 #+BEGIN_SRC emacs-lisp
   (use-package flycheck
     :ensure t
-    :init (global-flycheck-mode))
+    :init ())
 #+END_SRC
+* Flycheck
+  #+BEGIN_SRC emacs-lisp
+    (use-package flycheck
+      :init (global-flycheck-mode)
+      :config (progn
+                (add-hook 'after-init-hook #'global-flycheck-mode)
+                ;; turn on flychecking globally
+                (add-hook 'after-init-hook #'global-flycheck-mode)
+                ;; disable jshint since we prefer eslint checking
+                ;; disable json-jsonlist checking for json files
+                (setq-default flycheck-disabled-checkers
+                              (append flycheck-disabled-checkers
+                                      '(javascript-jshint json-jsonlist)))
+
+                ;; use eslint with web-mode for jsx files
+                (setq flycheck-checkers '(javascript-eslint))
+                (flycheck-add-mode 'javascript-eslint 'web-mode)))
+  #+END_SRC
 * Company
 We use the [[http://company-mode.github.io/][company-mode]] completion framework
 #+BEGIN_SRC emacs-lisp
   (use-package company)
 #+END_SRC
-* Golang
-  - Install go-mode and set it up to use =goimports= to format our
-    files. go-mode depends on the following tools:
-    - [[github.com/rogpeppe/godef][godef]]
-    - [[golang.org/x/tools/cmd/goimports][goimports]]
-    - [[golang.org/x/tools/cmd/godoc][godoc]]
-    #+BEGIN_SRC emacs-lisp
-      (use-package go-mode
-        :commands (gofmt-before-save)
-        :config
-        (setq gofmt-command "goimports")
-        (add-hook 'before-save-hook   'gofmt-before-save)
-        (add-hook 'go-mode-hook       'column-enforce-mode)
-        (add-hook 'go-mode-hook       (lambda () (flyspell-prog-mode)))
-        (add-hook 'go-mode-hook       (lambda ()
-                                        (local-set-key (kbd "C-c C-r") 'go-remove-unused-imports)))
-        (add-hook 'go-mode-hook       (lambda ()
-                                        (local-set-key (kbd "M-.") 'godef-jump)))
-        (define-key go-mode-map (kbd "C-c C-c")       'comment-region)
-        (define-key go-mode-map (kbd "C-u C-c C-c")   'uncomment-region))
-    #+END_SRC
-  - Install [[https://github.com/syohex/emacs-go-eldoc][go-eldoc]] to see variable, return value and function
-    argument in the echo area. It depends on [[github.com/nsf/gocode][gocode]].
-    #+BEGIN_SRC emacs-lisp
-      (use-package go-eldoc
-        :after go-mode
-        :config
-        (add-hook 'go-mode-hook 'go-eldoc-setup))
-    #+END_SRC
-  - Activate completion with [[https://github.com/nsf/gocode/tree/master/emacs-company][company-go]]
-    #+BEGIN_SRC emacs-lisp
-      (use-package company-go
-        :after company
-        :config
-        (setq company-idle-delay .1
-              company-echo-delay 0)
-        (add-hook 'go-mode-hook (lambda ()
-                                  (set (make-local-variable 'company-backends) '(company-go))
-                                  (company-mode)))
-        (custom-set-faces
-         `(company-scrollbar-bg       ((t (:background "lightgray"))))
-         `(company-scrollbar-fg       ((t (:background "darkgrey"))))
-         '(company-preview            ((t (:foreground "darkgray" :underline t))))
-         '(company-preview-common     ((t (:inherit company-preview))))
-         '(company-tooltip            ((t (:background "lightgray" :foreground "black"))))
-         '(company-tooltip-selection  ((t (:background "steelblue" :foreground "white"))))
-         '(company-tooltip-common     ((((type x)) (:inherit company-tooltip :weight bold))
-                                       (t (:inherit company-tooltip))))
-         '(company-tooltip-common-selection
-           ((((type x)) (:inherit company-tooltip-selection :weight bold))
-            (t (:inherit company-tooltip-selection))))))
-    #+END_SRC
-  - Use go-guru, it depends on the [[https://godoc.org/golang.org/x/tools/cmd/guru][guru]] tool.
-    #+BEGIN_SRC emacs-lisp
-      (use-package go-guru
-        :after go-mode
-        :commands (go-guru-hl-identifier-mode)
-        :config
-        (define-key go-mode-map (kbd "C-c g") 'go-guru-map)
-        (add-hook 'go-mode-hook 'go-guru-hl-identifier-mode))
-    #+END_SRC
-  - Make use of [[https://github.com/emacsmirror/godoctor][godoctor.el]], it depends on the [[http://gorefactor.org/][godocotor]] utility
-    #+BEGIN_SRC emacs-lisp
-      (use-package godoctor
-        :bind (("C-c d r" . godoctor-rename)
-               ("C-c d e" . godoctor-extract)
-               ("C-c d t" . godoctor-toggle)
-               ("C-c d g" . godoctor-godoc)))
-    #+END_SRC
 * Direnv
 I make use of several different gopath, this makes use of the [[https://direnv.net/][direnv]]
 tool to automatically update the environment of the current buffer
