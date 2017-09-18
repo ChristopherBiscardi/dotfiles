@@ -715,8 +715,7 @@ a whole window for itself.
 * Flyspell
 Let's have some warning when we type things wrong ate
 #+BEGIN_SRC emacs-lisp
-  (use-package flyspell-mode
-    :ensure nil
+  (use-package flyspell
     :config
     (add-hook 'flyspell-mode-hook 'flyspell-buffer)
     (setq flyspell-issue-message-flag nil)
@@ -724,14 +723,6 @@ Let's have some warning when we type things wrong ate
       (add-hook hook (lambda () (flyspell-mode 1))))
     (dolist (hook '(change-log-mode-hook log-edit-mode-hook))
       (add-hook hook (lambda () (flyspell-mode -1)))))
-#+END_SRC
-* Flycheck
-We want to check for linter errors as we go (see [[https://github.com/flycheck/flycheck][here]] for
-documentation)
-#+BEGIN_SRC emacs-lisp
-  (use-package flycheck
-    :ensure t
-    :init ())
 #+END_SRC
 * Flycheck
   #+BEGIN_SRC emacs-lisp
