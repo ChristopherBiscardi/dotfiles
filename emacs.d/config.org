@@ -96,12 +96,12 @@ Use auto-compile to always get up-to-date compiled packages
    Make Saves go in another directory
    Make more of them
   #+BEGIN_SRC emacs-lisp
-  (setq backup-directory-alist `(("." . "~/.saves")))
-  (setq backup-by-copying t)
-  (setq delete-old-versions t
-    kept-new-versions 6
-    kept-old-versions 2
-    version-control t)
+    (setq backup-directory-alist `(("." . "~/.saves"))
+          backup-by-copying t
+          delete-old-versions t
+          kept-new-versions 6
+          kept-old-versions 2
+          version-control t)
   #+END_SRC
 ** YASnippets
   #+BEGIN_SRC emacs-lisp
@@ -141,9 +141,14 @@ Use auto-compile to always get up-to-date compiled packages
    #+END_SRC
 ** abbrev-mode
    #+BEGIN_SRC emacs-lisp
-     (dolist (hook '(markdown-mode-hook
-                     text-mode-hook))
-       (add-hook hook (lambda () (abbrev-mode 1))))  
+     (use-package abbrev
+       :diminish abbrev-mode
+       :config (progn
+                 (if (file-exists-p abbrev-file-name)
+                     (quietly-read-abbrev-file))
+                 (dolist (hook '(markdown-mode-hook
+                                 text-mode-hook))
+                   (add-hook hook (lambda () (abbrev-mode 1))))))
    #+END_SRC
 * Modes
 ** spaceline
@@ -154,15 +159,19 @@ Use auto-compile to always get up-to-date compiled packages
        (spaceline-emacs-theme))
      (use-package spaceline-all-the-icons
        :after spaceline
-       :config (spaceline-all-the-icons-theme))
+       :config (progn
+                 (spaceline-all-the-icons-theme)
+                (spaceline-all-the-icons--setup-package-updates)
+                (spaceline-all-the-icons--setup-neotree)
+                (spaceline-all-the-icons--setup-git-ahead)
+                (setq spaceline-all-the-icons-separator-type 'slant)))
    #+END_SRC
 ** Visual Regexp
 #+BEGIN_SRC emacs-lisp
-  (use-package visual-regexp
-    :bind (("C-c r" . vr/replace)
-           ("C-c q" . vr/query-replace)))
   (use-package visual-regexp-steroids
     :bind
+    ("C-c r" . vr/replace)
+    ("C-c q" . vr/query-replace)
     ;; to use visual-regexp-steroids's isearch instead of the
     ;; built-in regexp isearch, also include the following lines:
     ("C-r" . vr/isearch-backward)
@@ -185,20 +194,39 @@ Use auto-compile to always get up-to-date compiled packages
     #+END_SRC
 ** (M-x) smex
   #+BEGIN_SRC emacs-lisp
-    ;(autoload 'smex "smex" "Smex is a M-x enhancement for Emacs, it provides a convenient interface to your recently and most frequently used commands.")
-    ;(global-set-key (kbd "M-x") 'smex)
+    ;; "Smex is a M-x enhancement for Emacs, it provides a convenient interface to your recently and most frequently used commands."
+    (use-package smex
+      :bind (("M-x" . smex)
+             ("M-X" . smex-major-mode-commands)
+             ("C-c C-c M-x" . execute-extended-command)))
   #+END_SRC
 ** Rainbow Mode
 #+BEGIN_SRC emacs-lisp
   (show-paren-mode t)
+
   (use-package rainbow-delimiters
     :config (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
+
+  ;; rainbow representations of hex/etc colors
   (use-package rainbow-mode
     :config (progn
-    ; rainbow representations of hex/etc colors
     (add-hook 'less-mode-hook 'rainbow-mode)
     (add-hook 'sass-mode-hook 'rainbow-mode)
-    (add-hook 'web-mode-hook 'rainbow-mode)))
+    (add-hook 'web-mode-hook 'rainbow-mode)
+    (add-hook 'org-mode-hook 'rainbow-mode)))
+#+END_SRC
+** auto-complete-mode
+#+BEGIN_SRC emacs-lisp
+  (use-package auto-complete)
+#+END_SRC
+** focus-mode
+#+BEGIN_SRC emacs-lisp
+  (use-package focus
+    :config (add-hook 'markdown-mode 'focus-mode))
+#+END_SRC
+** ack
+#+BEGIN_SRC emacs-lisp
+  (use-package ack)
 #+END_SRC
 * Org-mode
 #+BEGIN_SRC emacs-lisp
@@ -244,203 +272,59 @@ Use auto-compile to always get up-to-date compiled packages
 #+END_SRC
 * Magit
   #+BEGIN_SRC emacs-lisp
+    (use-package magit
+          :load-path "~/elisp/magit"
+          :config
+          (progn
+            (setq magit-diff-options '("-b")) ; ignore whitespace
+    )
+          :bind (("C-x v d" . magit-status)
+                 ("C-x v C-d" . my/magit-status-in-directory)
+                 ("C-x v p" . magit-push)
+                 ("C-x v c" . my/magit-commit-all)))
     (global-set-key (kbd "C-x g") 'magit-status)
   #+END_SRC
 * LANG
-** Haskell
-*** Intero
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'haskell-mode-hook 'intero-mode)
-#+END_SRC
-*** haskell-mode
-#+BEGIN_SRC emacs-lisp
-
-#+END_SRC
-*** Graveyard
-**** structured-haskell-mode
-     #+BEGIN_SRC emacs-lisp
-       ;(require 'shm)
-       ;(add-hook 'haskell-mode-hook 'structured-haskell-mode)
-       ;(setq shm-program-name "structured-haskell-mode")
-     #+END_SRC
-**** Stylish-Haskell (on-save)
-    #+BEGIN_SRC emacs-lisp
-      ;(setq haskell-stylish-on-save t)
-    #+END_SRC
-**** ghc-mod
-   #+BEGIN_SRC emacs-lisp
-   ;(autoload 'ghc-init "ghc" nil t)
-   #+END_SRC
-**** Flycheck
-#+BEGIN_SRC emacs-lisp
-  ;; (defun haskell-mode-setup-hook ()
-  ;;   (interactive)
-  ;;   (progn
-  ;;     ;; ...
-  ;;     (flycheck-select-checker 'haskell-stack-ghc)))
-
-  ;; (add-hook 'haskell-mode-hook 'haskell-mode-setup-hook)
-#+END_SRC
-**** Haskell Mode
-***** ghc-init
-     #+BEGIN_SRC emacs-lisp
-       ;(add-hook 'haskell-mode-hook 'ghc-init)
-     #+END_SRC
-***** setq
-#+BEGIN_SRC emacs-lisp
-  ;; (setq
-  ;;  ;; Use notify.el (if you have it installed) at the end of running
-  ;;  ;; Cabal commands or generally things worth notifying.
-  ;;  haskell-notify-p t
-  ;;  ;; To enable tags generation on save.
-  ;;  haskell-tags-on-save t
-  ;;  ;; Remove annoying error popups
-  ;;  haskell-interactive-popup-errors nil
-  ;;  ;; Better import handling
-  ;;  haskell-process-suggest-remove-import-lines t
-  ;;  haskell-process-auto-import-loaded-modules t
-  ;;  ;; Disable haskell-stylish-on-save, as it breaks flycheck highlighting.
-  ;;  ;; NOTE: May not be true anymore - taksuyu 2015-10-06
-  ;;  haskell-stylish-on-save nil)
-
-  ;; ;; align rules for Haskell
-  ;; (with-eval-after-load 'align
-  ;;   (add-to-list 'align-rules-list
-  ;;                '(haskell-types
-  ;;                  (regexp . "\\(\\s-+\\)\\(::\\|∷\\)\\s-+")
-  ;;                  (modes . '(haskell-mode literate-haskell-mode))))
-  ;;   (add-to-list 'align-rules-list
-  ;;                '(haskell-assignment
-  ;;                  (regexp . "\\(\\s-+\\)=\\s-+")
-  ;;                  (modes . '(haskell-mode literate-haskell-mode))))
-  ;;   (add-to-list 'align-rules-list
-  ;;                '(haskell-arrows
-  ;;                  (regexp . "\\(\\s-+\\)\\(->\\|→\\)\\s-+")
-  ;;                  (modes . '(haskell-mode literate-haskell-mode))))
-  ;;   (add-to-list 'align-rules-list
-  ;;                '(haskell-left-arrows
-  ;;                  (regexp . "\\(\\s-+\\)\\(<-\\|←\\)\\s-+")
-  ;;                  (modes . '(haskell-mode literate-haskell-mode)))))
-
-
-#+END_SRC
-***** Force haskell-mode on cabal-mode
-#+BEGIN_SRC emacs-lisp
- ; (add-hook 'haskell-cabal-mode-hook (require 'haskell-mode))
-#+END_SRC
-***** Remove overlays from ghc-check.el because flycheck is enabled
-#+BEGIN_SRC emacs-lisp
-  ;(set-face-attribute 'ghc-face-error nil :underline nil)
-  ;(set-face-attribute 'ghc-face-warn nil :underline nil)
-#+END_SRC
-***** Indentation
-     #+BEGIN_SRC emacs-lisp
-       ; haskell-mode indentation is incompatible with structured-haskell-mode
-       ; (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
-     #+END_SRC
-**** (C-c C-c) haskell-compile
-     #+BEGIN_SRC emacs-lisp
-       ;; (eval-after-load "haskell-mode"
-       ;;     '(define-key haskell-mode-map (kbd "C-c C-c") 'haskell-compile))
-
-       ;; (eval-after-load "haskell-cabal"
-       ;;     '(define-key haskell-cabal-mode-map (kbd "C-c C-c") 'haskell-compile))
-     #+END_SRC
-**** haskell-interactive-mode
-    #+BEGIN_SRC emacs-lisp
-      ;; (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
-      ;; (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-or-reload)
-      ;; (define-key haskell-mode-map (kbd "C-`") 'haskell-interactive-bring)
-      ;; (define-key haskell-mode-map (kbd "C-c C-t") 'haskell-process-do-type)
-      ;; (define-key haskell-mode-map (kbd "C-c C-i") 'haskell-process-do-info)
-      ;; (define-key haskell-mode-map (kbd "C-c C-c") 'haskell-process-cabal-build)
-      ;; (define-key haskell-mode-map (kbd "C-c C-k") 'haskell-interactive-mode-clear)
-      ;; (define-key haskell-mode-map (kbd "C-c c") 'haskell-process-cabal)
-      ;; (define-key haskell-mode-map (kbd "SPC") 'haskell-mode-contextual-space)
-      ; cabal-mode
-      ;; (define-key haskell-cabal-mode-map (kbd "C-`") 'haskell-interactive-bring)
-      ;; (define-key haskell-cabal-mode-map (kbd "C-c C-k") 'haskell-interactive-mode-clear)
-      ;; (define-key haskell-cabal-mode-map (kbd "C-c C-c") 'haskell-process-cabal-build)
-      ;; (define-key haskell-cabal-mode-map (kbd "C-c c") 'haskell-process-cabal)
-    #+END_SRC
 ** JavaScript
 *** web-mode
 **** Force *jsx* mode for all .jsx? files
      This gives us JSX highlighting
       #+BEGIN_SRC emacs-lisp
-        (setq web-mode-content-types-alist
-              '(("jsx" . "\\.js[x]?\\'")))
-      #+END_SRC
-*** js2-mode
-   #+BEGIN_SRC emacs-lisp
-     ;; adjust indents for web-mode to 2 spaces
-     (defun my-web-mode-hook ()
-       "Hooks for Web mode. Adjust indents"
-         ;;; http://web-mode.org/
-       (setq web-mode-markup-indent-offset 2)
-       (setq web-mode-css-indent-offset 2)
-       (setq web-mode-code-indent-offset 2)
-       (setq web-mode-attr-indent-offset 2)
-       (add-hook 'local-write-file-hooks
-                 (lambda ()
-                   (delete-trailing-whitespace)
-                                  nil)))
-     (add-hook 'web-mode-hook  'my-web-mode-hook)
-   #+END_SRC
-*** js3-mode
-#+BEGIN_SRC emacs-lisp
-  '(js3-auto-indent-p t)
-  '(js3-consistent-level-indent-inner-bracket t)
-  '(js3-curly-indent-offset 2)
-  '(js3-enter-indents-newline t)
-  '(js3-expr-indent-offset 2)
-  '(js3-indent-level 0)
-  '(js3-indent-on-enter-key t)
-  '(js3-lazy-commas t)
-  '(js3-paren-indent-offset 2)
-  '(js3-square-indent-offset 2)
+        (use-package web-mode
+          :init (progn
+                  (setq web-mode-markup-indent-offset 2
+                        web-mode-css-indent-offset 2
+                        web-mode-code-indent-offset 2
+                        web-mode-attr-indent-offset 2
+                        web-mode-content-types-alist '(("jsx" . "\\.js[x]?\\'"))
+                        ))
+          :mode (("\\.html\\'" . web-mode)
+                 ("\\.jsx?$" . web-mode)
+                 ("\\.json$" . web-mode)
+                 ("\\.css$" . web-mode)
+                 )
+          :config (progn
+                    (add-hook 'local-write-file-hooks
+                              (lambda ()
+                                (delete-trailing-whitespace)
+                                nil))
+                    '(js3-auto-indent-p t)
+                    '(js3-consistent-level-indent-inner-bracket t)
+                    '(js3-curly-indent-offset 2)
+                    '(js3-enter-indents-newline t)
+                    '(js3-expr-indent-offset 2)
+                    '(js3-indent-level 0)
+                    '(js3-indent-on-enter-key t)
+                    '(js3-lazy-commas t)
+                    '(js3-paren-indent-offset 2)
+                    '(js3-square-indent-offset 2)
+                    )
+        )
+        (use-package prettier-js
+          :after web-mode
+          :config (add-hook 'web-mode-hook 'prettier-js-mode)
+        )
 #+END_SRC
-*** prettier-js
-#+BEGIN_SRC emacs-lisp
-  (use-package prettier-js
-    :config (add-hook 'web-mode-hook 'prettier-js-mode)
-  )
-  ;; (defun enable-minor-mode (my-pair)
-  ;;   "Enable minor mode if filename match the regexp.  MY-PAIR is a cons cell (regexp . minor-mode)."
-  ;;   (if (buffer-file-name)
-  ;;       (if (string-match (car my-pair) buffer-file-name)
-  ;;           (funcall (cdr my-pair)))))
-  ;; (add-hook 'web-mode-hook #'(lambda ()
-  ;;                             (enable-minor-mode
-  ;;                              '("\\.jsx?\\'" . prettier-js-mode))))
-#+END_SRC
-** TypeScript
-   #+BEGIN_SRC emacs-lisp
-     ;(defun setup-tide-mode ()
-     ;  (interactive)
-     ;  (tide-setup)
-     ;  (flycheck-mode +1)
-     ;  (setq flycheck-check-syntax-automatically '(save mode-enabled))
-     ;  (eldoc-mode +1)
-     ;  (tide-hl-identifier-mode +1)
-       ;; company is an optional dependency. You have to
-       ;; install it separately via package-install
-       ;; `M-x package-install [ret] company`
-     ;  (company-mode +1))
-
-     ;; formats the buffer before saving
-     ;(add-hook 'before-save-hook 'tide-format-before-save)
-
-     ;(add-hook 'typescript-mode-hook #'setup-tide-mode)
-
-     ;; format options
-     ;(setq tide-format-options '(:indentSize 2 :tabSize 2 :placeOpenBraceOnNewLineForControlBlocks nil))
-
-     ;(add-hook 'web-mode-hook
-     ;          (lambda ()
-     ;            (when (string-equal "tsx" (file-name-extension buffer-file-name))
-     ;              (setup-tide-mode))))
-   #+END_SRC
 ** Lisp
 *** Slime
 #+BEGIN_SRC emacs-lisp
@@ -454,25 +338,24 @@ Use auto-compile to always get up-to-date compiled packages
   #+BEGIN_SRC emacs-lisp
     (use-package paredit
       :config (progn
-    (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
-    (add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
-    (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
-    (add-hook 'ielm-mode-hook             #'enable-paredit-mode)
-    (add-hook 'lisp-mode-hook             #'enable-paredit-mode)
-    (add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
-    (add-hook 'scheme-mode-hook           #'enable-paredit-mode)
-    (add-hook 'clojure-mode-hook 'paredit-mode)
-    ))
+                (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
+                (add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
+                (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
+                (add-hook 'ielm-mode-hook             #'enable-paredit-mode)
+                (add-hook 'lisp-mode-hook             #'enable-paredit-mode)
+                (add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
+                (add-hook 'scheme-mode-hook           #'enable-paredit-mode)
+                (add-hook 'clojure-mode-hook 'paredit-mode)
+                ))
 
   #+END_SRC
 ** SQL
 #+BEGIN_SRC emacs-lisp
-  (when (require 'sql-upcase nil :noerror)
-     (add-hook 'sql-mode-hook 'sql-upcase-mode)
-     (add-hook 'sql-interactive-mode-hook 'sql-upcase-mode))
+(when (require 'sql-upcase nil :noerror)
+   (add-hook 'sql-mode-hook 'sql-upcase-mode)
+   (add-hook 'sql-interactive-mode-hook 'sql-upcase-mode))
 #+END_SRC
 ** Golang
-*** go-mode
 Install go-mode and set it up to use =goimports= to format our
 files. go-mode depends on the following tools:
     - [[github.com/rogpeppe/godef][godef]]
@@ -491,7 +374,8 @@ files. go-mode depends on the following tools:
         (add-hook 'go-mode-hook       'column-enforce-mode)
         (add-hook 'go-mode-hook       (lambda () (flyspell-prog-mode))))
 
-      ;; Install [[https://github.com/syohex/emacs-go-eldoc][go-eldoc]] to see variable, return value and function argument
+      ;; Install [[https://github.com/syohex/emacs-go-eldoc][go-eldoc]] to see
+      ;;  variable, return value and function argument
       ;; in the echo area. It depends on [[github.com/nsf/gocode][gocode]].
       (use-package go-eldoc
         :after go-mode
@@ -508,7 +392,8 @@ files. go-mode depends on the following tools:
                                   (set (make-local-variable
                                         'company-backends) '(company-go))
                                   (company-mode))))
-      ;; Use go-guru, it depends on the [[https://godoc.org/golang.org/x/tools/cmd/guru][guru]] tool.
+      ;; Use go-guru, it depends on the
+      ;; [[https://godoc.org/golang.org/x/tools/cmd/guru][guru]] tool.
       (use-package go-guru
         :after go-mode
         :commands (go-guru-hl-identifier-mode)
@@ -517,33 +402,37 @@ files. go-mode depends on the following tools:
         (add-hook 'go-mode-hook 'go-guru-hl-identifier-mode))
       ;; Make use of
       ;; [[https://github.com/emacsmirror/godoctor][godoctor.el]], it
-      ;; depends on the [[http://gorefactor.org/][godocotor]] utility 
+      ;; depends on the [[http://gorefactor.org/][godocotor]] utility
       (use-package godoctor
         :bind (("C-c d r" . godoctor-rename)
                ("C-c d e" . godoctor-extract)
                ("C-c d t" . godoctor-toggle)
                ("C-c d g" . godoctor-godoc)))
 
+      ;; flycheck-gometalinter
+      (use-package flycheck-gometalinter
+        :config
+        (progn
+          (flycheck-gometalinter-setup)))
     #+END_SRC
     #+END_SRC
+** Markdown
+#+BEGIN_SRC emacs-lisp
+  (use-package markdown-mode
+    :ensure t
+    :commands (markdown-mode gfm-mode)
+    :mode (("README\\.md\\'" . gfm-mode)
+           ("\\.md\\'" . markdown-mode)
+           ("\\.markdown\\'" . markdown-mode))
+    :init (setq markdown-command "pandoc"))
+
+#+END_SRC
 * File Associations
   #+BEGIN_SRC emacs-lisp
     (add-to-list 'auto-mode-alist '("Dockerfile" . shell-script-mode))
-    (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
-    (add-to-list 'auto-mode-alist '("\\.post$" . markdown-mode))
-    (add-to-list 'auto-mode-alist '("emacs" . lisp-mode))
-    (add-to-list 'auto-mode-alist '("zshrc" . shell-script-mode))
     (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
     (add-to-list 'auto-mode-alist '("\\.scss$" . sass-mode))
     (add-to-list 'auto-mode-alist '("\\.rc$" . restclient-mode))
-    (add-to-list 'auto-mode-alist '("\\.json$" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.jsx?$" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.php?$" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.css?$" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
-    ; custom rc files for JS projects
-    (add-to-list 'auto-mode-alist '("\\.faterc$" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.leorc$" . web-mode))
   #+END_SRC
 * UI
 This is setting up the UI as a like it, simple and clean. I also put
@@ -644,19 +533,6 @@ UTF-8 for all the things!
   (prefer-coding-system 'utf-8)
   (setq-default buffer-file-coding-system 'utf-8-auto-unix)
 #+END_SRC
-* Backup
-By default emacs backups edited buffer in their current
-directory. Having a bunch of =~= files everywhere in my filesystem is
-highly annoying, so let's put them somewhere else.
-#+BEGIN_SRC emacs-lisp
-  (let ((backups-dir (expand-file-name "backups" user-emacs-directory)))
-    (setq backup-by-copying t                             ;; Copy the file, don't rename it
-          backup-directory-alist `((".*" . ,backups-dir)) ;; Put them in ~/.emacs.backups
-          delete-old-versions t                           ;; Delete old version
-          kept-old-versions 3                             ;; Keep the 3 oldest version
-          kept-new-versions 3                             ;; and the 3 newest one (including the one being made)
-          version-control t))                             ;; Use numbered file name
-#+END_SRC
 * Undo Tree
 [[https://www.emacswiki.org/emacs/UndoTree][undo-tree]] provide a visual tree of the undo that we have made.
 #+BEGIN_SRC emacs-lisp
@@ -669,48 +545,6 @@ highly annoying, so let's put them somewhere else.
       (setq undo-tree-history-directory-alist `((".*" . ,undo-dir))))
     (global-undo-tree-mode))
 
-#+END_SRC
-* Helm
-Helm make it easy to filter stuff :). I used [[http://tuhdo.github.io/helm-intro.html][this tutorial]] as an
-inspiration for most of the following configuration.
-We bind the following global keys:
-  - =C-c h= :: is made the helm prefix, which-key will show possible
-               match if we ever forget what to do next
-  - =M-x= :: helm-M-x, same but better
-  - =M-y= :: helm-show-kill-ring, allows to have a visual view of the
-             kill ring
-  - =C-x b= :: helm-mini, allows switch buffer using helm powerful
-               matching
-  - =C-x C-f= :: helm-find-files, find-file but better ;-).
-  - =C-c h o=  :: helm-occur, allows quickly finding occurrences of
-                  pattern in current buffer
-In helm mode, we define the following to bindings:
-  - =<TAB>= :: helm-execute-persistent-action, will usually show the
-               current match content or if in something like =M-x= the
-               associated help
-  - =C-z= :: helm-select-action, will show available action from the
-             current helm status
-We let helm auto-resize from =30%= to =70%= of the frame is
-affecting. We also set it to use the current frame instead of opening
-a whole window for itself.
-#+BEGIN_SRC emacs-lisp
-  ;; (use-package helm
-  ;;   :bind (("M-x"         . helm-M-x)
-  ;;          ("M-y"         . helm-show-kill-ring)
-  ;;          ("C-x b"       . helm-mini)
-  ;;          ("C-x C-f"     . helm-find-files)
-  ;;          ("C-c h o"     . helm-occur))
-  ;;   :config
-  ;;   (require 'helm-config)
-  ;;   (global-unset-key (kbd "C-x c"))
-  ;;   (global-set-key (kbd "C-c h")         'helm-command-prefix)
-  ;;   (define-key helm-map (kbd "<tab>")    'helm-execute-persistent-action)
-  ;;   (define-key helm-map (kbd "C-z")      'helm-select-action)
-  ;;   (helm-mode t)
-  ;;   (setq helm-autoresize-max-height 70
-  ;;         helm-autoresize-min-height 30
-  ;;         helm-split-window-in-side-p t)
-  ;;   (helm-autoresize-mode t))
 #+END_SRC
 * Flyspell
 Let's have some warning when we type things wrong ate
@@ -756,4 +590,101 @@ tool to automatically update the environment of the current buffer
     (direnv-mode))
 #+END_SRC
 
-* TODO ivy (ivy-smex vs counsel-M-x) counsel swiper (vs helm)
+* ivy/counsel/swiper
+#+BEGIN_SRC emacs-lisp
+  (use-package counsel
+    :init (progn
+            (setq ivy-use-virtual-buffers t
+                  enable-recursive-minibuffers t
+                  ivy-count-format "(%d/%d) ")
+            )
+    :config (progn
+              (ivy-mode 1)
+              (ivy-set-display-transformer
+               'counsel-M-X
+               'counsel-M-X-transformer))
+    :bind (("\C-s" . swiper)
+           ( "C-c C-r" . ivy-resume)
+           ("<f6>" . ivy-resume)
+           ("M-x" . counsel-M-x)
+           ("M-X" . counsel-M-X)
+           ("C-x C-f" . counsel-find-file)
+           ("<f1> f" . counsel-describe-function)
+           ("<f1> v" . counsel-describe-variable)
+           ("<f1> l" . counsel-find-library)
+           ("<f2> i" . counsel-info-lookup-symbol)
+           ("<f2> u" . counsel-unicode-char)
+           ("C-c g" . counsel-git)
+           ("C-c j" . counsel-git-grep)
+           ("C-c k" . counsel-ag)
+           ("C-x l" . counsel-locate)
+           ("C-S-o" . counsel-rhythmbox)
+           :map read-expression-map
+           ("C-r" . counsel-expression-history))
+    )
+  (defun counsel-M-X (&optional initial-input)
+    "Ivy version of `execute-extended-command'.
+  Optional INITIAL-INPUT is the initial input in the minibuffer."
+    (interactive)
+    (let* ((cands obarray)
+           (pred 'commandp)
+           (sort t))
+      (when (require 'smex nil 'noerror)
+        (unless smex-initialized-p
+          (smex-initialize))
+        (when (smex-detect-new-commands)
+          (smex-update))
+        ;; custom code for M-X, copied from counsel-M-x
+        (setq commands
+              (delete-dups
+               (append (smex-extract-commands-from-keymap (current-local-map))
+                       (smex-extract-commands-from-features major-mode))))
+        (setq commands (smex-sort-according-to-cache commands))
+        (setq cands (mapcar #'symbol-name commands))
+        ;; end custom code
+        (setq pred nil)
+        (setq sort nil))
+      ;; When `counsel-M-X' returns, `last-command' would be set to
+      ;; `counsel-M-X' because :action hasn't been invoked yet.
+      ;; Instead, preserve the old value of `this-command'.
+      (setq this-command last-command)
+      (setq real-this-command real-last-command)
+      (ivy-read (counsel--M-X-prompt) cands
+                :predicate pred
+                :require-match t
+                :history 'counsel-M-x-history
+                :action
+                (lambda (cmd)
+                  (when (featurep 'smex)
+                    (smex-rank (intern cmd)))
+                  (let ((prefix-arg current-prefix-arg))
+                    (setq real-this-command
+                          (setq this-command (intern cmd)))
+                    (command-execute (intern cmd) 'record)))
+                :sort sort
+                :keymap counsel-describe-map
+                :initial-input initial-input
+                :caller 'counsel-M-X)))
+
+  (defun counsel--M-X-prompt ()
+    "String for `M-X' plus the string representation of `current-prefix-arg'."
+    (if (not current-prefix-arg)
+        "M-X "
+      (concat
+       (if (eq current-prefix-arg '-)
+           "- "
+         (if (integerp current-prefix-arg)
+             (format "%d " current-prefix-arg)
+           (if (= (car current-prefix-arg) 4)
+               "C-u "
+             (format "%d " (car current-prefix-arg)))))
+       "M-X ")))
+  (defun counsel-M-X-transformer (cmd)
+    "Return CMD appended with the corresponding binding in the current window."
+    (let ((binding (substitute-command-keys (format "\\[%s]" cmd))))
+      (setq binding (replace-regexp-in-string "C-x 6" "<f2>" binding))
+      (if (string-match "^M-X" binding)
+          cmd
+        (format "%s (%s)"
+                cmd (propertize binding 'face 'font-lock-keyword-face)))))
+#+END_SRC

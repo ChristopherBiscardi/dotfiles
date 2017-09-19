@@ -128,12 +128,6 @@ lynx(){
     docker run -it --rm jess/lynx
 }
 
-# Optimzation of `eval $(dm env dev)`
-# export DOCKER_TLS_VERIFY="1"
-# export DOCKER_HOST="tcp://192.168.99.100:2376"
-# export DOCKER_CERT_PATH="/Users/chris/.docker/machine/machines/dev"
-# export DOCKER_MACHINE_NAME="dev"
-
 # docker for mac
 unset DOCKER_TLS_VERIFY
 unset DOCKER_HOST
@@ -145,12 +139,6 @@ ulimit -n 4096
 
 # OPAM configuration
 . /Users/chris/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
-
-# DCOS
-export DCOS_CONFIG_PATH=etc/config-1.6.yaml
-
-## Chrome Killer (>17GB)
-alias chrome-killer="vagrant up m1 m2 m3 a1 a2 a3 a4 a5 a6 p1 p2 p3 boot"
 
 ## GPG Agent
 if test -f ~/.gnupg/.gpg-agent-info -a -n "$(pgrep gpg-agent)"; then
@@ -165,4 +153,8 @@ source "/Users/biscarch/.oh-my-zsh/custom/themes/spaceship.zsh-theme"
 ## pyenv `brew install pyenv`
 eval "$(pyenv init -)"
 
+# fzf completions
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# direnv
+eval "$(direnv hook zsh)"
