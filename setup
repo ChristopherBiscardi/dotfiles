@@ -33,7 +33,8 @@ brew install ack cloc elixir emacs erlang ffmpeg ghi git go hub leiningen mtr re
 
 brew cask install aerial ngrok
 
-npm i -g spaceship-zsh-theme diff-so-fancy
+# js-yaml is for emacs
+npm i -g spaceship-zsh-theme diff-so-fancy js-yaml
 
 # use diff-so-fancy for git diffs
 git config --global core.pager "diff-so-fancy | less --tabs=4 -RFX"

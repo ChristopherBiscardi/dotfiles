@@ -351,9 +351,11 @@ Use auto-compile to always get up-to-date compiled packages
   #+END_SRC
 ** SQL
 #+BEGIN_SRC emacs-lisp
-(when (require 'sql-upcase nil :noerror)
-   (add-hook 'sql-mode-hook 'sql-upcase-mode)
-   (add-hook 'sql-interactive-mode-hook 'sql-upcase-mode))
+  (use-package sql-mode
+    :mode ("\\.sql" . sql-mode))
+  (when (require 'sql-upcase nil :noerror)
+     (add-hook 'sql-mode-hook 'sql-upcase-mode)
+     (add-hook 'sql-interactive-mode-hook 'sql-upcase-mode))
 #+END_SRC
 ** Golang
 Install go-mode and set it up to use =goimports= to format our
@@ -368,6 +370,7 @@ files. go-mode depends on the following tools:
                :map go-mode-map
                     ("C-c C-r" . go-remove-unused-imports)
                     ("M-." . godef-jump))
+        :mode ("\\.go" . go-mode)
         :config
         (setq gofmt-command "goimports")
         (add-hook 'before-save-hook   'gofmt-before-save)
@@ -426,6 +429,11 @@ files. go-mode depends on the following tools:
            ("\\.markdown\\'" . markdown-mode))
     :init (setq markdown-command "pandoc"))
 
+#+END_SRC
+** YAML
+#+BEGIN_SRC emacs-lisp
+  (use-package yaml-mode
+    :mode (("\\.ya?ml" . yaml-mode)))
 #+END_SRC
 * File Associations
   #+BEGIN_SRC emacs-lisp
@@ -573,8 +581,9 @@ Let's have some warning when we type things wrong ate
                                       '(javascript-jshint json-jsonlist)))
 
                 ;; use eslint with web-mode for jsx files
-                (setq flycheck-checkers '(javascript-eslint))
-                (flycheck-add-mode 'javascript-eslint 'web-mode)))
+                (setq flycheck-checkers '(javascript-eslint yaml-jsyaml))
+                (flycheck-add-mode 'javascript-eslint 'web-mode)
+                (flycheck-add-mode 'yaml-jsyaml 'yaml-mode)))
   #+END_SRC
 * Company
 We use the [[http://company-mode.github.io/][company-mode]] completion framework

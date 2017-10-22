@@ -83,6 +83,8 @@ export PATH="/usr/local/sbin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
 ## Android Studio's android sdk
 export PATH="$HOME/Library/Android/sdk/tools:$HOME/Library/Android/sdk/platform-tools:$PATH"
+export PATH="$HOME/google-cloud-sdk/bin:$PATH"
+
 export ANDROID_HOME=/Users/chris/Library/Android/sdk/
 
 [[ -s $HOME/.nvm/nvm.sh ]] && . $HOME/.nvm/nvm.sh  # This loads NVM
