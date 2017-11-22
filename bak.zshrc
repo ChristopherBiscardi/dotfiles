@@ -160,3 +160,8 @@ eval "$(pyenv init -)"
 
 # direnv
 eval "$(direnv hook zsh)"
+
+RAND1=$[${RANDOM}%256]
+RAND2=$[${RANDOM}%256]
+RAND3=$[${RANDOM}%256]
+printf -- $"\033]6;1;bg;red;brightness;$RAND1\a\033]6;1;bg;green;brightness;$RAND2\a\033]6;1;bg;blue;brightness;$RAND3\a"
