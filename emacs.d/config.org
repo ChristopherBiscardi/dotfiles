@@ -161,10 +161,10 @@ Use auto-compile to always get up-to-date compiled packages
        :after spaceline
        :config (progn
                  (spaceline-all-the-icons-theme)
-                (spaceline-all-the-icons--setup-package-updates)
-                (spaceline-all-the-icons--setup-neotree)
-                (spaceline-all-the-icons--setup-git-ahead)
-                (setq spaceline-all-the-icons-separator-type 'slant)))
+                 (spaceline-all-the-icons--setup-package-updates)
+                 (spaceline-all-the-icons--setup-neotree)
+                 (spaceline-all-the-icons--setup-git-ahead)
+                 (setq spaceline-all-the-icons-separator-type 'slant)))
    #+END_SRC
 ** Visual Regexp
 #+BEGIN_SRC emacs-lisp
@@ -322,7 +322,9 @@ Use auto-compile to always get up-to-date compiled packages
         )
         (use-package prettier-js
           :after web-mode
-          :config (add-hook 'web-mode-hook 'prettier-js-mode)
+          :config (progn
+                    (add-hook 'web-mode-hook 'prettier-js-mode)
+                    (add-hook 'markdown-mode-hook 'prettier-js-mode))
         )
 #+END_SRC
 ** Lisp

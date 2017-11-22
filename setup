@@ -54,3 +54,8 @@ git config --global color.diff.commit "227 bold"
 git config --global color.diff.old "red bold"
 git config --global color.diff.new "green bold"
 git config --global color.diff.whitespace "red reverse"
+
+# MANUAL STEPS
+
+# Install all-the-icons fonts from within emacs:
+# M-x all-the-icons-fonts
