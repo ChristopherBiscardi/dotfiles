@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: file-react-component
+# key: frc
+# --
+import React, { Component } from 'react';
+
+export default class React extends Component {
+  render() {
+    return $1
+  }
+}

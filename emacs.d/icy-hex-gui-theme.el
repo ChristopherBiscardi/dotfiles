@@ -82,11 +82,6 @@
  '(fringe ((t (:inherit (default)))))
  '(header-line ((t (:underline (:color foreground-color :style line) :inverse-video nil :inherit (mode-line)))))
  '(tooltip ((t (:foreground "#003541" :background "lightyellow" :inherit (variable-pitch)))))
- '(mode-line ((t (:background "#002028" :foreground "#258bd2" :box nil))))
- '(mode-line-buffer-id ((t (:weight bold))))
- '(mode-line-emphasis ((t (:weight bold))))
- '(mode-line-highlight ((((class color) (min-colors 88)) (:box nil)) (t (:inherit (highlight)))))
- '(mode-line-inactive ((t (:weight light :box nil :foreground "#258bd2" :background "#002028" :inherit (mode-line)))))
  '(isearch ((((class color) (min-colors 88) (background light)) (:foreground "lightskyblue1" :background "magenta3"))
             (((class color) (min-colors 88) (background dark)) (:foreground "brown4" :background "palevioletred2"))
             (((class color) (min-colors 16)) (:foreground "cyan1" :background "magenta4"))
@@ -106,14 +101,26 @@
           (((class color) (min-colors 8) (background dark)) (:foreground "white" :background "#00779a")) (((type tty) (class mono)) (:inverse-video t)) (t (:background "gray"))))
  '(next-error ((t (:inherit (region)))))
  '(query-replace ((t (:inherit (isearch)))))
+
+
+ ;; mode-line spaceline powerline
+ '(mode-line ((t (:background "#002028" :foreground "#258bd2" :box nil))))
+ '(mode-line-buffer-id ((t (:weight bold))))
+ '(mode-line-emphasis ((t (:weight bold))))
+ '(mode-line-highlight ((((class color) (min-colors 88)) (:box nil)) (t (:inherit (highlight)))))
+ '(mode-line-inactive ((t (:weight light :box nil :foreground "#258bd2" :background "#002028" :inherit (mode-line)))))
+
  '(powerline-active1 ((t (:background "#00485b" :foreground "#258bd2"))))
  '(powerline-active2 ((t (:background "#002028" :foreground "#258bd2"))))
- '(powerline-inactive1 ((t (:background "#00485b" :foreground "#00485b"))))
- '(powerline-inactive2 ((t (:background "#003441" :foreground "#003441"))))
+ '(powerline-inactive1 ((t (:background "#00485b" :foreground "#002028"))))
+ '(powerline-inactive2 ((t (:background "#003441" :foreground "#002028"))))
+
+ ;; org-mode
  '(org-hide ((t (:background "#002833" :foreground "#002833")))))
 
 ;; Markdown Mode
 '(markdown-code-face ((t (:background "#13496e" :foreground "#258bd2"))))
+'(markdown-pre-face ((t (:background "#13496e" :foreground "#258bd2"))))
 
 (custom-theme-set-variables
  'icy-hex-gui

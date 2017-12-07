@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: file-emotion-styled-component
+# key: fesc
+# --
+import styled from 'react-emotion';
+
+export default styled('$1')\`
+  $2
+\`

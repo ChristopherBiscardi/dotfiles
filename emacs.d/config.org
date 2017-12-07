@@ -105,13 +105,14 @@ Use auto-compile to always get up-to-date compiled packages
   #+END_SRC
 ** YASnippets
   #+BEGIN_SRC emacs-lisp
-    (use-package yasnippet
-      :diminish yas-minor-mode
-      :defer (yas-global-mode)
-      :config
-      (setq yas-snippet-dirs
-            '("~/.emacs.d/snippets" ;; snippets from git repo
-              )))
+        (use-package yasnippet
+          :config
+          (progn
+            (yas-global-mode 1)
+            (setq-default yas-snippet-dirs
+                  '("~/.emacs.d/snippets" ;; snippets from git repo
+                    ))
+            (define-key yas-minor-mode-map (kbd "C-c y") #'yas-insert-snippet)))
   #+END_SRC
 ** KeyFreq
    #+BEGIN_SRC emacs-lisp
@@ -430,14 +431,14 @@ files. go-mode depends on the following tools:
            ("\\.md\\'" . markdown-mode)
            ("\\.markdown\\'" . markdown-mode))
     :init (setq markdown-command "pandoc"))
-
+    :config (setq markdown-fontify-code-blocks-natively t)
 #+END_SRC
 ** YAML
 #+BEGIN_SRC emacs-lisp
   (use-package yaml-mode
     :mode (("\\.ya?ml" . yaml-mode)))
 #+END_SRC
-* File Associations
+* Arbitrary File Associations
   #+BEGIN_SRC emacs-lisp
     (add-to-list 'auto-mode-alist '("Dockerfile" . shell-script-mode))
     (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
@@ -445,11 +446,8 @@ files. go-mode depends on the following tools:
     (add-to-list 'auto-mode-alist '("\\.rc$" . restclient-mode))
   #+END_SRC
 * UI
-This is setting up the UI as a like it, simple and clean. I also put
-some tweak affecting navigation in this section (e.g. switching
-between windows)
 ** Navigation
-- Swap buffer around with C-Shift-<key>
+*** Swap buffer around with C-Shift-<key>
   #+BEGIN_SRC emacs-lisp
     (use-package buffer-move
       :bind (("C-S-<up>" . buf-move-up)
@@ -457,14 +455,14 @@ between windows)
              ("C-S-<left>" . buf-move-left)
              ("C-S-<right>" . buf-move-right)))
   #+END_SRC
-- [[https://www.emacswiki.org/emacs/WinnerMode][Winner mode]] allow us to jump between window configuration using =C-c
+*** [[https://www.emacswiki.org/emacs/WinnerMode][Winner mode]] allow us to jump between window configuration using =C-c
   <left>= and =C-c <right>=. Very useful when wanting to see one
   buffer with more space then be back to comparison for instance
     #+BEGIN_SRC emacs-lisp
       (when (fboundp 'winner-mode)
         (winner-mode 1))
     #+END_SRC
-- Use [[https://github.com/justbur/emacs-which-key][which-key]] to help us figure out what we can do next
+*** Use [[https://github.com/justbur/emacs-which-key][which-key]] to help us figure out what we can do next
 #+BEGIN_SRC emacs-lisp
   (use-package which-key
     :defer 5

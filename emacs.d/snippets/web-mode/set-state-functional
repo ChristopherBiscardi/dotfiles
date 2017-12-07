@@ -1,0 +1,9 @@
+# key: ssf
+# name: 
+# --
+this.setState((prevState, props) => {
+  $0
+  return {
+    $1
+  }
+})

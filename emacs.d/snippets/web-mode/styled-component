@@ -1,0 +1,6 @@
+# key: sc
+# name: styled-component
+# --
+const $1 = styled('$2')\`
+$0
+\`
