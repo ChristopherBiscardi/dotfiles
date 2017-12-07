@@ -1,6 +1,8 @@
 ZSH=$HOME/.oh-my-zsh
 ZSH_THEME="spaceship"
 
+source "$HOME/.oh-my-zsh/custom/themes/spaceship.zsh-theme"
+
 # Source private aliases, etc
 source ~/.zshrc-priv
 
@@ -13,7 +15,7 @@ export ORG=$DROPBOX/__notes/_org
 
 DOTFILES=$DROPBOX/dotfiles
 
-plugins=(git brew docker encode64 npm osx alias-tips zsh-kubernetes )
+plugins=(git brew docker encode64 npm osx alias-tips zsh-kubernetes)
 source $ZSH/oh-my-zsh.sh
 
 # Aliases
@@ -40,7 +42,7 @@ alias dk="docker kill"
 ## "ssh" into docker4mac
 alias d4m="docker run -it --privileged --pid=host debian nsenter -t 1 -m -u -n -i sh"
 di() {
-    docker images | peco | awk '{print $3}'
+    docker images | fzf | awk '{print $3}'
 }
 
 ## Git
@@ -149,8 +151,6 @@ if test -f ~/.gnupg/.gpg-agent-info -a -n "$(pgrep gpg-agent)"; then
 else
     eval $(gpg-agent --daemon ~/.gnupg/.gpg-agent-info)
 fi
-
-source "/Users/biscarch/.oh-my-zsh/custom/themes/spaceship.zsh-theme"
 
 ## pyenv `brew install pyenv`
 eval "$(pyenv init -)"
