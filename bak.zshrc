@@ -13,7 +13,7 @@ export PROJ="$DROPBOX/projects"
 export PUBLISH=$DROPBOX/publishing
 export ORG=$DROPBOX/__notes/_org
 
-DOTFILES=$DROPBOX/dotfiles
+DOTFILES=~/github/christopherbiscardi/dotfiles
 
 plugins=(git brew docker encode64 npm osx alias-tips zsh-kubernetes)
 source $ZSH/oh-my-zsh.sh
