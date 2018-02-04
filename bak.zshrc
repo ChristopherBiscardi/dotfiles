@@ -1,27 +1,26 @@
 ZSH=$HOME/.oh-my-zsh
 ZSH_THEME="spaceship"
 
-source "$HOME/.oh-my-zsh/custom/themes/spaceship.zsh-theme"
+echo $ZSH_CUSTOM
+source "$ZSH_CUSTOM/themes/spaceship.zsh-theme"
 
-# Source private aliases, etc
+# Source private aliases, etc that don't get checked in
 source ~/.zshrc-priv
 
 # Vars
 export ALTERNATE_EDITOR=""
 export EDITOR=emacsclient
-export PROJ="$DROPBOX/projects"
 export PUBLISH=$DROPBOX/publishing
 export ORG=$DROPBOX/__notes/_org
+export GITHUB=$HOME/github
 
-DOTFILES=~/github/christopherbiscardi/dotfiles
+DOTFILES=$GITHUB/dotfiles
 
 plugins=(git brew docker encode64 npm osx alias-tips zsh-kubernetes)
 source $ZSH/oh-my-zsh.sh
 
 # Aliases
-alias v="/usr/local/Cellar/vim/*/bin/vim"
 alias weechat="/usr/local/Cellar/weechat/*/bin/weechat-curses"
-alias gups="git pull --rebase upstream master"
 #alias curl="/usr/local/Cellar/curl/*/bin/curl"
 alias emacsdaemon="/usr/local/Cellar/emacs/25.1/Emacs.app/Contents/MacOS/Emacs --daemon"
 e() {
@@ -38,7 +37,7 @@ alias d="docker"
 alias dm="docker-machine"
 alias dc="docker-compose"
 alias dps='docker ps --format "table {{.Command}}\\t{{.Names}}\\t{{.Image}}\\t{{.Status}}"'
-alias dk="docker kill"
+alias dk="docker ps | fzf | xargs docker kill"
 ## "ssh" into docker4mac
 alias d4m="docker run -it --privileged --pid=host debian nsenter -t 1 -m -u -n -i sh"
 di() {
@@ -49,34 +48,27 @@ di() {
 alias git="hub"
 alias s="git status -sb"
 
-## jq
-yarn-get-deps() {
-    # Get dependecies from package.json on a single line
-    jq --raw-output '.dependencies | keys  | reduce .[] as $item (""; . + " " + $item)' $0
-}
+# random fns
 create-presentation() {
     echo $1
     create-react-app "$1" --scripts-version spectacle-scripts 
 }
-
-## Projects
-alias proj="$PROJ"
-alias haxl="$PROJ/snaplet-haxl"
-alias oli="$PROJ/_oli"
-alias sal="$PROJ/_superawesomelabs"
-alias blog="$DROPBOX/blog/______leo-blog/"
-
-## Publishing
-alias publish="cd $PUBLISH"
-alias snap-for-beginners="cd $PUBLISH/snap-for-beginners"
-
-# PATH adjustments
-export PATH="$PATH:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:$HOME/.local/bin"
-# yarn (npm replacement)
-export PATH="$HOME/.yarn/bin:$PATH"
+# get latest version number of package
 yarn-latest() {
     yarn info $1 --json | jq '.data."dist-tags".latest'
 }
+# Get dependecies from package.json on a single line
+yarn-get-deps() {
+    if [[ -a $1 ]];
+    then
+        jq --raw-output '.dependencies | keys  | reduce .[] as $item (""; . + " " + $item)' $1
+    else
+        echo "file $0 doesn't exist" 1&2
+    fi
+}
+
+# PATH adjustments
+export PATH="$PATH:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:$HOME/.local/bin"
 # manual bin
 export PATH="$HOME/bin:$PATH"
 ## homebrew
@@ -155,7 +147,7 @@ else
 fi
 
 ## pyenv `brew install pyenv`
-eval "$(pyenv init -)"
+#eval "$(pyenv init -)"
 
 # fzf completions
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -163,6 +155,7 @@ eval "$(pyenv init -)"
 # direnv
 eval "$(direnv hook zsh)"
 
+# randomize colors of iterm titlebars
 RAND1=$[${RANDOM}%256]
 RAND2=$[${RANDOM}%256]
 RAND3=$[${RANDOM}%256]
