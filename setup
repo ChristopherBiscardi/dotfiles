@@ -1,18 +1,10 @@
 #!/usr/bin/env zsh
 
-# First install oh-my-zsh
-if [ -z ${ZSH_CUSTOM+x} ];
-then
-    echo "ZSH_CUSTOM is unset; install oh-my-zsh and re-run setup";
-    exit 1
-else
-    echo "var is set to '$var'"; fi
-
 DOTFILES=~/github/christopherbiscardi/dotfiles
 mkdir ~/bin
 
-ln -s $DOTFILES/emacs.d ~/emacs.d
-ln -s $DOTFILES/bak.zshrc ~/.zshrc
+ln -sf $DOTFILES/emacs.d ~/emacs.d
+ln -sf $DOTFILES/bak.zshrc ~/.zshrc
 #ln -s $DOTFILES/atom ~/.atom
 
 git config --global core.excludesfile ~/$DROPBOX/dotfiles/global_gitignore
