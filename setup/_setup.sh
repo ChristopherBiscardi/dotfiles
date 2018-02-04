@@ -3,10 +3,10 @@
 DOTFILES=~/github/christopherbiscardi/dotfiles
 mkdir ~/bin
 
-source $DOTFILES/homebrewize.sh
-source $DOTFILES/setup_git_cfg.sh
-source $DOTFILES/setup_zsh_cfg.sh
-source $DOTFILES/setup_emacs.sh
+source $DOTFILES/setup/homebrewize.sh
+source $DOTFILES/setup/setup_git_cfg.sh
+source $DOTFILES/setup/setup_zsh_cfg.sh
+source $DOTFILES/setup/setup_emacs.sh
 
 # "install all the things"
 homebrewize
