@@ -142,30 +142,29 @@ Use auto-compile to always get up-to-date compiled packages
    #+END_SRC
 ** abbrev-mode
    #+BEGIN_SRC emacs-lisp
-     (use-package abbrev
-       :diminish abbrev-mode
-       :config (progn
-                 (if (file-exists-p abbrev-file-name)
-                     (quietly-read-abbrev-file))
-                 (dolist (hook '(markdown-mode-hook
-                                 text-mode-hook))
-                   (add-hook hook (lambda () (abbrev-mode 1))))))
+     ;; (use-package abbrev
+     ;;   :diminish abbrev-mode
+     ;;   :after markdown-mode
+     ;;   :config (progn
+     ;;             (if (file-exists-p abbrev-file-name)
+     ;;                 (quietly-read-abbrev-file))
+     ;;             (dolist (hook '(markdown-mode-hook
+     ;;                             text-mode-hook))
+     ;;               (add-hook hook (lambda () (abbrev-mode 1))))))
    #+END_SRC
 * Modes
 ** spaceline
    #+BEGIN_SRC emacs-lisp
      (use-package spaceline-config
        :ensure spaceline
-       :config
-       (spaceline-emacs-theme))
+       :config  (spaceline-emacs-theme))
      (use-package spaceline-all-the-icons
        :after spaceline
-       :config (progn
-                 (spaceline-all-the-icons-theme)
-                 (spaceline-all-the-icons--setup-package-updates)
-                 (spaceline-all-the-icons--setup-neotree)
-                 (spaceline-all-the-icons--setup-git-ahead)
-                 (setq spaceline-all-the-icons-separator-type 'slant)))
+       :config (spaceline-all-the-icons-theme)
+               (spaceline-all-the-icons--setup-package-updates)
+               (spaceline-all-the-icons--setup-neotree)
+               (spaceline-all-the-icons--setup-git-ahead)
+               (setq spaceline-all-the-icons-separator-type 'slant))
    #+END_SRC
 ** Visual Regexp
 #+BEGIN_SRC emacs-lisp
@@ -210,11 +209,10 @@ Use auto-compile to always get up-to-date compiled packages
 
   ;; rainbow representations of hex/etc colors
   (use-package rainbow-mode
-    :config (progn
-    (add-hook 'less-mode-hook 'rainbow-mode)
+    :config (add-hook 'less-mode-hook 'rainbow-mode)
     (add-hook 'sass-mode-hook 'rainbow-mode)
     (add-hook 'web-mode-hook 'rainbow-mode)
-    (add-hook 'org-mode-hook 'rainbow-mode)))
+    (add-hook 'org-mode-hook 'rainbow-mode))
 #+END_SRC
 ** auto-complete-mode
 #+BEGIN_SRC emacs-lisp
@@ -223,41 +221,56 @@ Use auto-compile to always get up-to-date compiled packages
 ** focus-mode
 #+BEGIN_SRC emacs-lisp
   (use-package focus
+    :after markdown-mode
     :config (add-hook 'markdown-mode 'focus-mode))
 #+END_SRC
 ** ack
 #+BEGIN_SRC emacs-lisp
   (use-package ack)
 #+END_SRC
+** command-log-mode
+   #+BEGIN_SRC emacs-lisp
+     (use-package command-log-mode)
+   #+END_SRC
+** graphviz-dot-mode
+#+BEGIN_SRC emacs-lisp
+  (use-package graphviz-dot-mode)
+#+END_SRC
 * Org-mode
 #+BEGIN_SRC emacs-lisp
-  (use-package org
-    :config
-    (progn
-      (set 'my-orgdir "~/Dropbox/__notes/_org")
+    (use-package org
+      :config
       (setq org-src-fontify-natively t
-            org-agenda-files (list (concat my-orgdir "/personal.org"))
-            org-default-notes-file (concat my-orgdir "/notes.org")
-            org-capture-templates
-            '(("t" "Todo" entry (file+headline (concat my-orgdir "/todo.org") "Tasks")
-               "* TODO %?\n  %i\n  %a")
-              ("j" "Journal" entry (file+datetree (concat my-orgdir "/journal.org"))
-               "* %?\nEntered on %U\n  %i\n  %a"))))
-    :bind ("\C-cc" . org-capture))
+              my-orgdir "~/github/christopherbiscardi/_org/"
+              org-agenda-files (list (expand-file-name "personal.org" my-orgdir))
+              org-default-notes-file (expand-file-name "notes.org" my-orgdir)
+              org-capture-templates
+              '(("t" "Todo" entry (file+headline (expand-file-name "todo.org" my-orgdir) "Tasks")
+                 "* TODO %?\n  %i\n  %a")
+                ("j" "Journal" entry (file+olp+datetree (expand-file-name "journal.org" my-orgdir))
+                 "* %?\nEntered on %U\n  %i\n  %a")
+                ("h" "honeycomb" entry (file+olp+datetree "~/github/christopherbiscardi/_org/honeycomb.org")
+                 "* %?\nEntered on %U\n  %i\n  %a")))
+        (add-to-list 'org-src-lang-modes '("dot" . graphviz-dot))
 
-  (use-package org-bullets
-    :config (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-    :init (setq org-hide-leading-stars t
-                org-ellipsis " \u25bc"))
+      :bind ("\C-cc" . org-capture))
 
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((dot . t)
-     (emacs-lisp . t)
-     (awk . t)
-     (haskell . t)
-     (css . t)
-     (js . t)))
+    (use-package org-bullets
+      :config (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+      :init (setq org-hide-leading-stars t
+                  org-ellipsis " \u25bc"))
+
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((dot . t)
+       (emacs-lisp . t)
+       (awk . t)
+       (haskell . t)
+       (css . t)
+       (js . t)
+       (sql . t)
+       (shell .t)
+       (translate . t)))
 #+END_SRC
 ** org-capture-alfred
 #+BEGIN_SRC emacs-lisp

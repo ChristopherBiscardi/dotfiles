@@ -81,6 +81,8 @@ yarn-latest() {
 export PATH="$HOME/bin:$PATH"
 ## homebrew
 export PATH="/usr/local/sbin:$PATH"
+## Arcanist
+export PATH="$HOME/github/phacility/arcanist/bin:$PATH"
 ## Rust
 export PATH="$HOME/.cargo/bin:$PATH"
 ## Android Studio's android sdk
