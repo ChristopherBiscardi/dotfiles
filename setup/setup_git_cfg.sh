@@ -1,3 +1,5 @@
+#!/usr/bin/env zsh
+
 setup_git_cfg()
 {
     git config --global core.excludesfile ~/$DOTFILES/global_gitignore

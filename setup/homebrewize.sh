@@ -1,3 +1,5 @@
+#!/usr/bin/env zsh
+
 homebrewize()
 {
     # Homebrew packages

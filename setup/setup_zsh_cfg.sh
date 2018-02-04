@@ -1,3 +1,5 @@
+#!/usr/bin/env zsh
+
 # requires git and to be running in zsh
 setup_zsh_cfg()
 {

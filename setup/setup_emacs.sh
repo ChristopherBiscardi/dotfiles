@@ -1,3 +1,5 @@
+#!/usr/bin/env zsh
+
 setup_emacs()
 {
     ln -sf $DOTFILES/emacs.d ~/emacs.d

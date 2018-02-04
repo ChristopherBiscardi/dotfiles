@@ -5,6 +5,19 @@
 PROGNAME=$(basename $0)
 CB_REPOS=~/github/christopherbiscardi
 
+# send strings to stderr
+error_exit()
+{
+# copypasta -- http://linuxcommand.org/lc3_wss0140.php
+#	----------------------------------------------------------------
+#	Function for exit due to fatal program error
+#		Accepts 1 argument:
+#			string containing descriptive error message
+#	----------------------------------------------------------------
+	echo "${PROGNAME}: ${1:-"Unknown Error"}" 1>&2
+	exit 1
+}
+
 # If homebrew exists on the system, good, otherwise install it
 if [ -z $(which brew) ];
 then
@@ -33,15 +46,3 @@ fi;
 
 $CB_REPOS/dotfiles/setup/_setup.sh || error_exit "setup failed?"
 
-# send strings to stderr
-error_exit()
-{
-# copypasta -- http://linuxcommand.org/lc3_wss0140.php
-#	----------------------------------------------------------------
-#	Function for exit due to fatal program error
-#		Accepts 1 argument:
-#			string containing descriptive error message
-#	----------------------------------------------------------------
-	echo "${PROGNAME}: ${1:-"Unknown Error"}" 1>&2
-	exit 1
-}
