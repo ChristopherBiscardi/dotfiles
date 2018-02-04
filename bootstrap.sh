@@ -3,7 +3,7 @@
 # Run This Script First to set everything up
 
 PROGNAME=$(basename $0)
-CB_REPOS=~/github/christopherbiscardi/
+CB_REPOS=~/github/christopherbiscardi
 
 # If homebrew exists on the system, good, otherwise install it
 if [ -z $(which brew) ];
@@ -23,7 +23,9 @@ fi;
 if [ -n $(which git) ];
 then
     mkdir -p $CB_REPOS
-    git clone git@github.com:ChristopherBiscardi/dotfiles.git $CB_REPOS/dotfiles
+    # TODO: set up ssh with keybase so ssh clone works?
+    # TODO: At least swap the https to ssh later
+    git clone https://github.com/ChristopherBiscardi/dotfiles.git $CB_REPOS/dotfiles || error_exit "unable to clone"
 else
     error_exit "something's wrong. osx comes with git but we can't find it"
     exit 1
