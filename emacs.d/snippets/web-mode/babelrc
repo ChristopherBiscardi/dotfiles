@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: babelrc
+# key: babelrc
+# --
+{
+  "presets": ["env", "stage-0", "emotion"]
+}

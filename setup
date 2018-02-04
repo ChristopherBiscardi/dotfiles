@@ -1,6 +1,14 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
-DOTFILES=~/Dropbox/dotfiles
+# First install oh-my-zsh
+if [ -z ${ZSH_CUSTOM+x} ];
+then
+    echo "ZSH_CUSTOM is unset; install oh-my-zsh and re-run setup";
+    exit 1
+else
+    echo "var is set to '$var'"; fi
+
+DOTFILES=~/github/christopherbiscardi/dotfiles
 mkdir ~/bin
 
 ln -s $DOTFILES/emacs.d ~/emacs.d
@@ -13,14 +21,6 @@ git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Crese
 # git ll
 git config --global alias.ll "log --pretty=format:'%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]' --decorate --numstat"
 
-# Better diffs (comes from git contrib scripts)
-# swap diff-highlight for diff-so-fancy
-#git config --global pager.log 'diff-highlight | less'
-#git config --global pager.show 'diff-highlight | less'
-#git config --global pager.diff 'diff-highlight | less'
-# git config --global interactive.diffFilter diff-highlight
-#curl https://raw.githubusercontent.com/git/git/master/contrib/diff-highlight/diff-highlight > ~/bin/diff-highlight && chmod +x ~/bin/diff-highlight
-
 # zsh plugins
 git clone git://github.com/zsh-users/zsh-autosuggestions $ZSH_CUSTOM/plugins/zsh-autosuggestions
 git clone https://github.com/djui/alias-tips.git $ZSH_CUSTOM/plugins/alias-tips
@@ -28,12 +28,75 @@ git clone git@github.com:Dbz/zsh-kubernetes.git $ZSH_CUSTOM/plugins/zsh-kubernet
 git clone https://github.com/jimeh/zsh-peco-history.git $ZSH_CUSTOM/plugins/zsh-peco-history
 
 # Homebrew packages
-brew install ack cloc elixir emacs erlang ffmpeg ghi git go hub leiningen mtr redis sbcl tsung weechat wget peco fzf
-/usr/local/opt/fzf/install
+brew tap theory/sqitch
+brew cask install \
+     1password 1password-cli \
+     ableton-live \
+     alfred \
+     discord \
+     docker \
+     dropbox \
+     emacs \
+     grammarly \
+     graphiql \
+     hex-fiend \
+     iterm2 \
+     kap \
+     karabiner karabiner-elements \
+     keybase \
+     obs \
+     quip \
+     signal \
+     sketch \
+     slack \
+     splice \
+     spotify \
+     sublime-text \
+     tweeten \
+     twitch \
+     vlc
+brew install \
+     ack \
+     aerial \
+     cloc \
+     curl \
+     dep \
+     direnv \
+     exercism \
+     ffmpeg \
+     fontconfig \
+     fzf \
+     ghi \
+     git \
+     gnupg \
+     go \
+     gpg-agent \
+     graphviz \
+     hub \
+     hugo \
+     ispell \
+     jq \
+     kubernetes-cli \
+     leiningen \
+     mtr \
+     ngrok \
+     pandoc \
+     redis \
+     sbcl \
+     sqitch \
+     sqitch_pg \
+     tree \
+     tsung \
+     watchman \
+     weechat \
+     wget \
+     yarn
 
-brew cask install aerial ngrok
+# fzf completino
+$(brew --prefix)/opt/fzf/install
 
-npm i -g spaceship-zsh-theme diff-so-fancy
+# js-yaml is for emacs
+yarn global add spaceship-zsh-theme diff-so-fancy js-yaml
 
 # use diff-so-fancy for git diffs
 git config --global core.pager "diff-so-fancy | less --tabs=4 -RFX"
@@ -53,3 +116,8 @@ git config --global color.diff.commit "227 bold"
 git config --global color.diff.old "red bold"
 git config --global color.diff.new "green bold"
 git config --global color.diff.whitespace "red reverse"
+
+# MANUAL STEPS
+
+# Install all-the-icons fonts from within emacs:
+# M-x all-the-icons-fonts

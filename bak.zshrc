@@ -1,6 +1,8 @@
 ZSH=$HOME/.oh-my-zsh
 ZSH_THEME="spaceship"
 
+source "$HOME/.oh-my-zsh/custom/themes/spaceship.zsh-theme"
+
 # Source private aliases, etc
 source ~/.zshrc-priv
 
@@ -11,9 +13,9 @@ export PROJ="$DROPBOX/projects"
 export PUBLISH=$DROPBOX/publishing
 export ORG=$DROPBOX/__notes/_org
 
-DOTFILES=$DROPBOX/dotfiles
+DOTFILES=~/github/christopherbiscardi/dotfiles
 
-plugins=(git brew docker encode64 npm osx alias-tips zsh-kubernetes )
+plugins=(git brew docker encode64 npm osx alias-tips zsh-kubernetes)
 source $ZSH/oh-my-zsh.sh
 
 # Aliases
@@ -79,10 +81,14 @@ yarn-latest() {
 export PATH="$HOME/bin:$PATH"
 ## homebrew
 export PATH="/usr/local/sbin:$PATH"
+## Arcanist
+export PATH="$HOME/github/phacility/arcanist/bin:$PATH"
 ## Rust
 export PATH="$HOME/.cargo/bin:$PATH"
 ## Android Studio's android sdk
 export PATH="$HOME/Library/Android/sdk/tools:$HOME/Library/Android/sdk/platform-tools:$PATH"
+export PATH="$HOME/google-cloud-sdk/bin:$PATH"
+
 export ANDROID_HOME=/Users/chris/Library/Android/sdk/
 
 [[ -s $HOME/.nvm/nvm.sh ]] && . $HOME/.nvm/nvm.sh  # This loads NVM
@@ -128,12 +134,6 @@ lynx(){
     docker run -it --rm jess/lynx
 }
 
-# Optimzation of `eval $(dm env dev)`
-# export DOCKER_TLS_VERIFY="1"
-# export DOCKER_HOST="tcp://192.168.99.100:2376"
-# export DOCKER_CERT_PATH="/Users/chris/.docker/machine/machines/dev"
-# export DOCKER_MACHINE_NAME="dev"
-
 # docker for mac
 unset DOCKER_TLS_VERIFY
 unset DOCKER_HOST
@@ -146,12 +146,6 @@ ulimit -n 4096
 # OPAM configuration
 . /Users/chris/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
 
-# DCOS
-export DCOS_CONFIG_PATH=etc/config-1.6.yaml
-
-## Chrome Killer (>17GB)
-alias chrome-killer="vagrant up m1 m2 m3 a1 a2 a3 a4 a5 a6 p1 p2 p3 boot"
-
 ## GPG Agent
 if test -f ~/.gnupg/.gpg-agent-info -a -n "$(pgrep gpg-agent)"; then
     source ~/.gnupg/.gpg-agent-info
@@ -160,9 +154,16 @@ else
     eval $(gpg-agent --daemon ~/.gnupg/.gpg-agent-info)
 fi
 
-source "/Users/biscarch/.oh-my-zsh/custom/themes/spaceship.zsh-theme"
-
 ## pyenv `brew install pyenv`
 eval "$(pyenv init -)"
 
+# fzf completions
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# direnv
+eval "$(direnv hook zsh)"
+
+RAND1=$[${RANDOM}%256]
+RAND2=$[${RANDOM}%256]
+RAND3=$[${RANDOM}%256]
+printf -- $"\033]6;1;bg;red;brightness;$RAND1\a\033]6;1;bg;green;brightness;$RAND2\a\033]6;1;bg;blue;brightness;$RAND3\a"
