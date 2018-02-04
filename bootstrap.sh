@@ -31,7 +31,7 @@ else
     exit 1
 fi;
 
-$CB_REPOS/dotfiles/setup || error_exit "setup failed?"
+$CB_REPOS/dotfiles/setup/_setup.sh || error_exit "setup failed?"
 
 # send strings to stderr
 error_exit()
