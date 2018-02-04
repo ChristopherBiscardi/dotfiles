@@ -3,113 +3,134 @@
 DOTFILES=~/github/christopherbiscardi/dotfiles
 mkdir ~/bin
 
-ln -sf $DOTFILES/emacs.d ~/emacs.d
-ln -sf $DOTFILES/bak.zshrc ~/.zshrc
+# link dotfiles
 #ln -s $DOTFILES/atom ~/.atom
 
-git config --global core.excludesfile ~/$DROPBOX/dotfiles/global_gitignore
-# git lg
-git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
-# git ll
-git config --global alias.ll "log --pretty=format:'%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]' --decorate --numstat"
-
-# zsh plugins
-git clone git://github.com/zsh-users/zsh-autosuggestions $ZSH_CUSTOM/plugins/zsh-autosuggestions
-git clone https://github.com/djui/alias-tips.git $ZSH_CUSTOM/plugins/alias-tips
-git clone git@github.com:Dbz/zsh-kubernetes.git $ZSH_CUSTOM/plugins/zsh-kubernetes
-git clone https://github.com/jimeh/zsh-peco-history.git $ZSH_CUSTOM/plugins/zsh-peco-history
-
-# Homebrew packages
-brew tap theory/sqitch
-brew cask install \
-     1password 1password-cli \
-     ableton-live \
-     alfred \
-     discord \
-     docker \
-     dropbox \
-     emacs \
-     grammarly \
-     graphiql \
-     hex-fiend \
-     iterm2 \
-     kap \
-     karabiner karabiner-elements \
-     keybase \
-     obs \
-     quip \
-     signal \
-     sketch \
-     slack \
-     splice \
-     spotify \
-     sublime-text \
-     tweeten \
-     twitch \
-     vlc
-brew install \
-     ack \
-     aerial \
-     cloc \
-     curl \
-     dep \
-     direnv \
-     exercism \
-     ffmpeg \
-     fontconfig \
-     fzf \
-     ghi \
-     git \
-     gnupg \
-     go \
-     gpg-agent \
-     graphviz \
-     hub \
-     hugo \
-     ispell \
-     jq \
-     kubernetes-cli \
-     leiningen \
-     mtr \
-     ngrok \
-     pandoc \
-     redis \
-     sbcl \
-     sqitch \
-     sqitch_pg \
-     tree \
-     tsung \
-     watchman \
-     weechat \
-     wget \
-     yarn
-
-# fzf completino
-$(brew --prefix)/opt/fzf/install
-
+# "install all the things"
+homebrewize
 # js-yaml is for emacs
 yarn global add spaceship-zsh-theme diff-so-fancy js-yaml
 
-# use diff-so-fancy for git diffs
-git config --global core.pager "diff-so-fancy | less --tabs=4 -RFX"
+setup_git_cfg
+setup_zsh_cfg
+setup_emacs
 
-# diff-so-fancy suggested colors
-# https://github.com/so-fancy/diff-so-fancy/tree/ed8cf1763d38bdd79ceb55a73b9ce7e30f1e184d#improved-colors-for-the-highlighted-bits
-git config --global color.ui true
+setup_git_cfg()
+{
+    git config --global core.excludesfile ~/$DOTFILES/global_gitignore
+    # git lg
+    git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+    # git ll
+    git config --global alias.ll "log --pretty=format:'%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]' --decorate --numstat"
 
-git config --global color.diff-highlight.oldNormal "red bold"
-git config --global color.diff-highlight.oldHighlight "red bold 52"
-git config --global color.diff-highlight.newNormal "green bold"
-git config --global color.diff-highlight.newHighlight "green bold 22"
+    # use diff-so-fancy for git diffs
+    git config --global core.pager "diff-so-fancy | less --tabs=4 -RFX"
+    
+    # diff-so-fancy suggested colors
+    # https://github.com/so-fancy/diff-so-fancy/tree/ed8cf1763d38bdd79ceb55a73b9ce7e30f1e184d#improved-colors-for-the-highlighted-bits
+    git config --global color.ui true
+    
+    git config --global color.diff-highlight.oldNormal "red bold"
+    git config --global color.diff-highlight.oldHighlight "red bold 52"
+    git config --global color.diff-highlight.newNormal "green bold"
+    git config --global color.diff-highlight.newHighlight "green bold 22"
+    
+    git config --global color.diff.meta "227"
+    git config --global color.diff.frag "magenta bold"
+    git config --global color.diff.commit "227 bold"
+    git config --global color.diff.old "red bold"
+    git config --global color.diff.new "green bold"
+    git config --global color.diff.whitespace "red reverse"
+}
 
-git config --global color.diff.meta "227"
-git config --global color.diff.frag "magenta bold"
-git config --global color.diff.commit "227 bold"
-git config --global color.diff.old "red bold"
-git config --global color.diff.new "green bold"
-git config --global color.diff.whitespace "red reverse"
+# requires git and to be running in zsh
+setup_zsh_cfg()
+{
+    ln -sf $DOTFILES/bak.zshrc ~/.zshrc
+    # zsh plugins
+    git clone git://github.com/zsh-users/zsh-autosuggestions $ZSH_CUSTOM/plugins/zsh-autosuggestions
+    git clone https://github.com/djui/alias-tips.git $ZSH_CUSTOM/plugins/alias-tips
+    git clone git@github.com:Dbz/zsh-kubernetes.git $ZSH_CUSTOM/plugins/zsh-kubernetes
+    git clone https://github.com/jimeh/zsh-peco-history.git $ZSH_CUSTOM/plugins/zsh-peco-history
+}
 
-# MANUAL STEPS
+homebrewize()
+{
+    # Homebrew packages
+    brew tap theory/sqitch
+    brew cask install \
+         1password 1password-cli \
+         ableton-live \
+         alfred \
+         discord \
+         docker \
+         dropbox \
+         emacs \
+         grammarly \
+         graphiql \
+         hex-fiend \
+         iterm2 \
+         kap \
+         karabiner karabiner-elements \
+         keybase \
+         obs \
+         quip \
+         signal \
+         sketch \
+         slack \
+         splice \
+         spotify \
+         sublime-text \
+         tweeten \
+         twitch \
+         vlc
+    brew install \
+         ack \
+         aerial \
+         cloc \
+         curl \
+         dep \
+         direnv \
+         exercism \
+         ffmpeg \
+         fontconfig \
+         fzf \
+         ghi \
+         git \
+         gnupg \
+         go \
+         gpg-agent \
+         graphviz \
+         hub \
+         hugo \
+         ispell \
+         jq \
+         kubernetes-cli \
+         leiningen \
+         mtr \
+         ngrok \
+         pandoc \
+         redis \
+         sbcl \
+         sqitch \
+         sqitch_pg \
+         tree \
+         tsung \
+         watchman \
+         weechat \
+         wget \
+         yarn
+    
+    # fzf completino
+    $(brew --prefix)/opt/fzf/install
+}
 
-# Install all-the-icons fonts from within emacs:
-# M-x all-the-icons-fonts
+setup_emacs()
+{
+    ln -sf $DOTFILES/emacs.d ~/emacs.d
+
+    # MANUAL STEPS THAT SHOULD NOT BE MANUAL
+    
+    # Install all-the-icons fonts from within emacs:
+    # M-x all-the-icons-fonts
+}

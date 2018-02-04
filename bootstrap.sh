@@ -5,11 +5,18 @@
 PROGNAME=$(basename $0)
 CB_REPOS=~/github/christopherbiscardi/
 
+# If homebrew exists on the system, good, otherwise install it
+if [ -z $(which brew) ];
+then
+    echo "Installing homebrew";
+    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+fi;
+
 # If zsh exists on the system, good, otherwise install oh-my-zsh
 if [ -z $(which zsh) ];
 then
     echo "Installing oh-my-zsh";
-    curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 fi;
 
 # osx comes with git; use it to pull dotfiles down
