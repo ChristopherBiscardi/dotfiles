@@ -2,7 +2,7 @@ ZSH=$HOME/.oh-my-zsh
 ZSH_THEME="spaceship"
 
 echo $ZSH_CUSTOM
-source "$ZSH_CUSTOM/themes/spaceship.zsh-theme"
+source "~/.oh-my-zsh/custom/themes/spaceship.zsh-theme"
 
 # Source private aliases, etc that don't get checked in
 source ~/.zshrc-priv
@@ -14,7 +14,7 @@ export PUBLISH=$DROPBOX/publishing
 export ORG=$DROPBOX/__notes/_org
 export GITHUB=$HOME/github
 
-DOTFILES=$GITHUB/dotfiles
+DOTFILES=$GITHUB/christopherbiscardi/dotfiles
 
 plugins=(git brew docker encode64 npm osx alias-tips zsh-kubernetes)
 source $ZSH/oh-my-zsh.sh
@@ -22,7 +22,7 @@ source $ZSH/oh-my-zsh.sh
 # Aliases
 alias weechat="/usr/local/Cellar/weechat/*/bin/weechat-curses"
 #alias curl="/usr/local/Cellar/curl/*/bin/curl"
-alias emacsdaemon="/usr/local/Cellar/emacs/25.1/Emacs.app/Contents/MacOS/Emacs --daemon"
+alias emacsdaemon="Emacs --daemon"
 e() {
     # spawn emacs in the background and disown the process
     # useful for launching GUI emacs and not having it crash
