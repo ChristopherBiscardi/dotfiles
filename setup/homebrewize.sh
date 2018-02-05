@@ -20,6 +20,7 @@ homebrewize()
          kap \
          karabiner karabiner-elements \
          keybase \
+         ngrok \
          obs \
          quip \
          signal \
@@ -54,7 +55,6 @@ homebrewize()
          kubernetes-cli \
          leiningen \
          mtr \
-         ngrok \
          pandoc \
          redis \
          sbcl \
