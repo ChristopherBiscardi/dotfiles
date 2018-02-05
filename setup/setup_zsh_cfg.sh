@@ -5,6 +5,7 @@ setup_zsh_cfg()
 {
     ln -sf $DOTFILES/bak.zshrc ~/.zshrc
     touch ~/.zshrc-priv
+    source ~/.zshrc
     # zsh plugins
     git clone git://github.com/zsh-users/zsh-autosuggestions $ZSH_CUSTOM/plugins/zsh-autosuggestions
     git clone https://github.com/djui/alias-tips.git $ZSH_CUSTOM/plugins/alias-tips
