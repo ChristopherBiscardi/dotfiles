@@ -7,6 +7,7 @@ homebrewize()
     brew cask install \
          1password 1password-cli \
          ableton-live \
+         aerial \
          alfred \
          discord \
          docker \
@@ -32,7 +33,6 @@ homebrewize()
          vlc
     brew install \
          ack \
-         aerial \
          cloc \
          curl \
          dep \
