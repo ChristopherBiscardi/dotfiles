@@ -44,7 +44,8 @@ alias d4m="docker run -it --privileged --pid=host debian nsenter -t 1 -m -u -n -
 di() {
     docker images | fzf | awk '{print $3}'
 }
-
+## mount a d4m host fs file to an arbitrary container
+alias d4merrlog="docker run -ti --mount type=bind,source=/var/log/docker-ce.err.log,target=/log,readonly alpine tail /log"
 ## Git
 alias git="hub"
 alias s="git status -sb"
