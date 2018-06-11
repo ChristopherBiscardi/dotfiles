@@ -1,8 +1,8 @@
 ZSH=$HOME/.oh-my-zsh
-ZSH_THEME="spaceship"
+#ZSH_THEME="spaceship"
 
-echo $ZSH_CUSTOM
-source "~/.oh-my-zsh/custom/themes/spaceship.zsh-theme"
+#echo $ZSH_CUSTOM
+#source "~/.oh-my-zsh/custom/themes/spaceship.zsh-theme"
 
 # Source private aliases, etc that don't get checked in
 source ~/.zshrc-priv
@@ -16,8 +16,12 @@ export GITHUB=$HOME/github
 
 DOTFILES=$GITHUB/christopherbiscardi/dotfiles
 
-plugins=(git brew docker encode64 npm osx alias-tips zsh-kubernetes)
+plugins=(git docker z fzf-z encode64 npm osx alias-tips zsh-kubernetes yarn-autocompletions)
 source $ZSH/oh-my-zsh.sh
+
+# Set Spaceship ZSH as a prompt
+autoload -U promptinit; promptinit
+prompt spaceship
 
 # Aliases
 alias weechat="/usr/local/Cellar/weechat/*/bin/weechat-curses"
@@ -160,3 +164,9 @@ RAND1=$[${RANDOM}%256]
 RAND2=$[${RANDOM}%256]
 RAND3=$[${RANDOM}%256]
 printf -- $"\033]6;1;bg;red;brightness;$RAND1\a\033]6;1;bg;green;brightness;$RAND2\a\033]6;1;bg;blue;brightness;$RAND3\a"
+
+# fzf-z
+export FZFZ_EXTRA_DIRS="~/github/"
+export FZFZ_EXCLUDE_PATTERN="node_modules"
+
+

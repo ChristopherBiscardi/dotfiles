@@ -91,6 +91,7 @@ Use auto-compile to always get up-to-date compiled packages
   (fset 'yes-or-no-p 'y-or-n-p)
   ; (C-z) Don't suspend on C-z. I do this too often.
   (global-unset-key (kbd "C-z"))
+  (setq require-final-newline t)
 #+END_SRC
 ** Saves
    Make Saves go in another directory
@@ -260,7 +261,7 @@ Use auto-compile to always get up-to-date compiled packages
       :init (setq org-hide-leading-stars t
                   org-ellipsis " \u25bc"))
 
-    (org-babel-do-load-languages
+  (org-babel-do-load-languages
      'org-babel-load-languages
      '((dot . t)
        (emacs-lisp . t)
@@ -269,8 +270,9 @@ Use auto-compile to always get up-to-date compiled packages
        (css . t)
        (js . t)
        (sql . t)
-       (shell .t)
-       (translate . t)))
+       ;;(sh . t)
+       ))
+
 #+END_SRC
 ** org-capture-alfred
 #+BEGIN_SRC emacs-lisp
@@ -367,8 +369,13 @@ Use auto-compile to always get up-to-date compiled packages
   #+END_SRC
 ** SQL
 #+BEGIN_SRC emacs-lisp
-  (use-package sql-mode
-    :mode ("\\.sql" . sql-mode))
+  (use-package sql
+    :mode ("\\.sql" . sql-mode)
+    :config (defadvice sql-mysql (around sql-mysql-around activate)
+    "SSH to bastion, then connect"
+    (let ((default-directory "/ssh:dogfood:"))
+      ad-do-it)))
+
   (when (require 'sql-upcase nil :noerror)
      (add-hook 'sql-mode-hook 'sql-upcase-mode)
      (add-hook 'sql-interactive-mode-hook 'sql-upcase-mode))
