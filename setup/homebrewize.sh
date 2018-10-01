@@ -33,39 +33,40 @@ homebrewize()
          twitch \
          vlc
     brew install \
-         ack \
-         cloc \
+         ack \ # file searching
+         bat \ # cat replacement
+         cloc \ # count lines of code in files
          curl \
          dep \
          direnv \
          exercism \
          ffmpeg \
          fontconfig \
-         fzf \
-         ghi \
+         fzf \ # fuzzy search and matching for anything
+         ghi \ # github issues
          git \
          gnupg \
          go \
          gpg-agent \
          graphviz \
-         hub \
+         hub \ # git for github (adds commands to git)
          hugo \
-         ispell \
-         jq \
+         ispell \ # spellcheck (for emacs mostly)
+         jq \ # CLI JSON manipulator
          kubernetes-cli \
          leiningen \
          mtr \
          pandoc \
          redis \
-         sbcl \
-         sqitch \
+         sbcl \ # Steel Bank Common Lisp
+         sqitch \ # SQL migration tool
          sqitch_pg \
          tree \
          tsung \
          watchman \
-         weechat \
+         weechat \ # irc client
          wget \
-         yarn
+         yarn # nodejs package manager
     
     # fzf completino
     $(brew --prefix)/opt/fzf/install
