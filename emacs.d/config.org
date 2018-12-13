@@ -458,6 +458,22 @@ files. go-mode depends on the following tools:
   (use-package yaml-mode
     :mode (("\\.ya?ml" . yaml-mode)))
 #+END_SRC
+** Pony
+   #+BEGIN_SRC emacs-lisp
+     (use-package ponylang-mode
+       :ensure t
+       :config
+       (progn
+         (add-hook
+          'ponylang-mode-hook
+          (lambda ()
+            (set-variable 'indent-tabs-mode nil)
+            (set-variable 'tab-width 2)))))
+     (use-package flycheck-pony)
+     ;; turn off lockfiles as it causes errors with ponyc at the moment
+     (setq create-lockfiles nil)
+     (add-to-list 'auto-mode-alist '("\\.pony$" . ponylang-mode))
+   #+END_SRC
 * Arbitrary File Associations
   #+BEGIN_SRC emacs-lisp
     (add-to-list 'auto-mode-alist '("Dockerfile" . shell-script-mode))

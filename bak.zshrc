@@ -59,11 +59,15 @@ alias cat="bat"
 # random fns
 create-presentation() {
     echo $1
-    create-react-app "$1" --scripts-version spectacle-scripts 
+#    create-react-app "$1" --scripts-version spectacle-scripts
+    git clone git@github.com:FormidableLabs/spectacle-boilerplate-mdx.git "$1"
 }
 # get latest version number of package
 yarn-latest() {
-    yarn info $1 --json | jq '.data."dist-tags".latest'
+    yarn info $1 --json | jq --compact-output '.data."dist-tags" | to_entries [] | {(.key): .value}' | fzf | jq -r 'to_entries [] | .value'
+}
+yarn-jiq() {
+    yarn info $1 --json | jiq -r
 }
 # Get dependecies from package.json on a single line
 yarn-get-deps() {
