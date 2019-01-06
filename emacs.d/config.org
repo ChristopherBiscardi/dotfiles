@@ -169,14 +169,15 @@ Use auto-compile to always get up-to-date compiled packages
    #+END_SRC
 ** Visual Regexp
 #+BEGIN_SRC emacs-lisp
-  (use-package visual-regexp-steroids
-    :bind
-    ("C-c r" . vr/replace)
-    ("C-c q" . vr/query-replace)
-    ;; to use visual-regexp-steroids's isearch instead of the
-    ;; built-in regexp isearch, also include the following lines:
-    ("C-r" . vr/isearch-backward)
-    ("C-s" . vr/isearch-forward))
+  ;; (use-package visual-regexp-steroids
+  ;;   :demand
+  ;;   :bind
+  ;;   ("C-c r" . vr/replace)
+  ;;   ("C-c q" . vr/query-replace)
+  ;;   ;; to use visual-regexp-steroids's isearch instead of the
+  ;;   ;; built-in regexp isearch, also include the following lines:
+  ;;   ("C-r" . vr/isearch-backward)
+  ;;   ("C-s" . vr/isearch-forward))
 #+END_SRC
 ** Avy (previously Ace-Jump-Mode)
   #+BEGIN_SRC emacs-lisp
@@ -515,6 +516,10 @@ files. go-mode depends on the following tools:
   #+BEGIN_SRC emacs-lisp
     (global-unset-key (kbd "C-z"))
   #+END_SRC
+- Unbind =C-x C-s=, I don't want finger slips when saving to close emacs
+  #+BEGIN_SRC emacs-lisp
+    (global-unset-key (kbd "C-x C-c"))
+  #+END_SRC
 - Enable [[https://github.com/Fuco1/smartparens][smartparens]] to automatically have our pairs matched for us
   #+BEGIN_SRC emacs-lisp
     (use-package smartparens-config
@@ -638,6 +643,7 @@ tool to automatically update the environment of the current buffer
 * ivy/counsel/swiper
 #+BEGIN_SRC emacs-lisp
   (use-package counsel
+    :demand
     :init (progn
             (setq ivy-use-virtual-buffers t
                   enable-recursive-minibuffers t

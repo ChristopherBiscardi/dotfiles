@@ -39,6 +39,7 @@ homebrewize()
          curl \
          dep \
          direnv \
+         exa \
          exercism \
          ffmpeg \
          fontconfig \

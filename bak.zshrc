@@ -54,6 +54,7 @@ alias git="hub"
 alias s="git status -sb"
 
 alias cat="bat"
+alias ls="exa"
 
 
 # random fns
