@@ -50,6 +50,7 @@ homebrewize()
          go \
          gpg-agent \
          graphviz \
+         hexyl \
          hub \ # git for github (adds commands to git)
          hugo \
          ispell \ # spellcheck (for emacs mostly)

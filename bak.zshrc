@@ -70,6 +70,9 @@ yarn-latest() {
 yarn-jiq() {
     yarn info $1 --json | jiq -r
 }
+yarn-worspace() {
+  yarn workspaces info --json | jq -r '.data | fromjson | keys | to_entries [] | .value' | fzf
+}
 # Get dependecies from package.json on a single line
 yarn-get-deps() {
     if [[ -a $1 ]];
@@ -177,3 +180,6 @@ printf -- $"\033]6;1;bg;red;brightness;$RAND1\a\033]6;1;bg;green;brightness;$RAN
 # fzf-z
 export FZFZ_EXTRA_DIRS="~/github/"
 export FZFZ_EXCLUDE_PATTERN="node_modules"
+
+# gatsby 
+export GATSBY_GRAPHQL_IDE=playground
