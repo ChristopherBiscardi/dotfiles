@@ -1,8 +1,4 @@
 ZSH=$HOME/.oh-my-zsh
-#ZSH_THEME="spaceship"
-
-#echo $ZSH_CUSTOM
-#source "~/.oh-my-zsh/custom/themes/spaceship.zsh-theme"
 
 # Source private aliases, etc that don't get checked in
 source ~/.zshrc-priv
@@ -10,18 +6,15 @@ source ~/.zshrc-priv
 # Vars
 export ALTERNATE_EDITOR=""
 export EDITOR=emacsclient
-export PUBLISH=$DROPBOX/publishing
-export ORG=$DROPBOX/__notes/_org
+# export PUBLISH=$DROPBOX/publishing
+# export ORG=$DROPBOX/__notes/_org
 export GITHUB=$HOME/github
 
 DOTFILES=$GITHUB/christopherbiscardi/dotfiles
 
-plugins=(git docker z fzf-z encode64 npm osx alias-tips zsh-kubernetes yarn-autocompletions)
+plugins=(git docker z fzf-z encode64 npm osx alias-tips zsh-kubernetes)
 source $ZSH/oh-my-zsh.sh
 
-# Set Spaceship ZSH as a prompt
-autoload -U promptinit; promptinit
-prompt spaceship
 
 # Aliases
 alias weechat="/usr/local/Cellar/weechat/*/bin/weechat-curses"
@@ -53,8 +46,17 @@ alias d4merrlog="docker run -ti --mount type=bind,source=/var/log/docker-ce.err.
 alias git="hub"
 alias s="git status -sb"
 
+## RUUUUUST
 alias cat="bat"
 alias ls="exa"
+alias du="dust"
+alias find="fd"
+alias ps="procs"
+alias htop="ytop"
+
+yw() {
+  yarn workspace $(yarn workspaces info --json | jq '.data' -r | jq "[keys][0] []" -r | fzf) $@
+}
 
 
 # random fns
@@ -65,13 +67,11 @@ create-presentation() {
 }
 # get latest version number of package
 yarn-latest() {
+  set -o xtrace
     yarn info $1 --json | jq --compact-output '.data."dist-tags" | to_entries [] | {(.key): .value}' | fzf | jq -r 'to_entries [] | .value'
 }
 yarn-jiq() {
     yarn info $1 --json | jiq -r
-}
-yarn-worspace() {
-  yarn workspaces info --json | jq -r '.data | fromjson | keys | to_entries [] | .value' | fzf
 }
 # Get dependecies from package.json on a single line
 yarn-get-deps() {
@@ -90,7 +90,7 @@ export PATH="$HOME/bin:$PATH"
 ## homebrew
 export PATH="/usr/local/sbin:$PATH"
 ## Arcanist
-export PATH="$HOME/github/phacility/arcanist/bin:$PATH"
+# export PATH="$HOME/github/phacility/arcanist/bin:$PATH"
 ## Rust
 export PATH="$HOME/.cargo/bin:$PATH"
 ## Android Studio's android sdk
@@ -155,12 +155,12 @@ ulimit -n 4096
 . /Users/chris/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
 
 ## GPG Agent
-if test -f ~/.gnupg/.gpg-agent-info -a -n "$(pgrep gpg-agent)"; then
-    source ~/.gnupg/.gpg-agent-info
-    export GPG_AGENT_INFO
-else
-    eval $(gpg-agent --daemon ~/.gnupg/.gpg-agent-info)
-fi
+# if test -f ~/.gnupg/.gpg-agent-info -a -n "$(pgrep gpg-agent)"; then
+#     source ~/.gnupg/.gpg-agent-info
+#     export GPG_AGENT_INFO
+# else
+#     eval $(gpg-agent --daemon ~/.gnupg/.gpg-agent-info)
+# fi
 
 ## pyenv `brew install pyenv`
 #eval "$(pyenv init -)"
@@ -181,5 +181,13 @@ printf -- $"\033]6;1;bg;red;brightness;$RAND1\a\033]6;1;bg;green;brightness;$RAN
 export FZFZ_EXTRA_DIRS="~/github/"
 export FZFZ_EXCLUDE_PATTERN="node_modules"
 
-# gatsby 
-export GATSBY_GRAPHQL_IDE=playground
+# Set Spaceship ZSH as a prompt
+autoload -U promptinit; promptinit
+prompt spaceship
+
+[[ $ITERM_PROFILE == " " ]] && source ~/github/christopherbiscardi/dotfiles/scripts/setup-streaming.sh
+
+source "/Users/chris/.oh-my-zsh/custom/themes/spaceship.zsh-theme"
+
+
+source "/Users/chris/.oh-my-zsh/custom/themes/spaceship.zsh-theme"
