@@ -38,4 +38,4 @@ colors:
     cyan:    '0x7fdbca'
     white:   '0xffffff'
 shell:
-  program: /Users/chris/.cargo/bin/nu
+  program: nu
