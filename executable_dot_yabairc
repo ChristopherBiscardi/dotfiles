@@ -20,3 +20,4 @@ yabai -m config right_padding  16
 yabai -m config window_gap     8
 
 yabai -m config window_shadow off
+yabai -m rule --add app=Emacs manage=on
