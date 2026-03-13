@@ -1,0 +1,58 @@
+[colors.bright]
+black = "0x575656"
+blue = "0x82aaff"
+cyan = "0x7fdbca"
+green = "0x22da6e"
+magenta = "0xc792ea"
+red = "0xef5350"
+white = "0xffffff"
+yellow = "0xffeb95"
+
+[colors.cursor]
+cursor = "0x7e57c2"
+text = "0xffffff"
+
+[colors.normal]
+black = "0x000000"
+blue = "0x82aaff"
+cyan = "0x21c7a8"
+green = "0x22da6e"
+magenta = "0xc792ea"
+red = "0xef5350"
+white = "0xffffff"
+yellow = "0xaddb67"
+
+[colors.primary]
+background = "0x011627"
+foreground = "0xd6deeb"
+
+[colors.footer_bar]
+background = "0x67b9fb"
+
+[colors.line_indicator]
+background = "0x011627"
+foreground = "#c6e5fe"
+
+[colors.selection]
+background = "0x04579a"
+foreground = "0xffffff"
+
+[font]
+size = 32.0
+
+# [shell]
+# program = "/Users/chris/.cargo/bin/nu"
+[terminal.shell]
+program = "/Users/chris/.cargo/bin/nu"
+# args = ["-c", "zellij", "-l", "welcome"]
+# program = "/Users/chris/.cargo/bin/zellij"
+# args = ["-l", "welcome"]
+
+[window]
+decorations = "buttonless"
+
+[window.padding]
+x = 10
+y = 10
+
+[terminal]
