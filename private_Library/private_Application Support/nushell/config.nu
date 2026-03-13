@@ -1,13 +1,16 @@
 # Nushell Config File
 
+use ~/github/nushell/nu_scripts/aliases/git/git-aliases.nu *
+
 use ~/github/nushell/nu_scripts/custom-completions/git/git-completions.nu *
 use ~/github/nushell/nu_scripts/custom-completions/cargo/cargo-completions.nu *
-use ~/github/nushell/nu_scripts/custom-completions/npm/npm-completions.nu *
-# use ~/github/nushell/nu_scripts/custom-completions/just/just-completions.nu *
+use ~/github/nushell/nu_scripts/custom-completions/rustup/rustup-completions.nu *
+# use ~/github/nushell/nu_scripts/custom-completions/npm/npm-completions.nu *
+use ~/github/nushell/nu_scripts/custom-completions/just/just-completions.nu *
 use ~/github/nushell/nu_scripts/custom-completions/typst/typst-completions.nu *
 use ~/github/nushell/nu_scripts/custom-completions/zellij/zellij-completions.nu *
 
-use "/Users/chris/Library/Application Support/nushell/git-aliases.nu" *
+use mise.nu
 # # Get just the extern definitions without the custom completion commands
 # use completions *
 
@@ -84,8 +87,7 @@ $env.config = {
     }
   }
   color_config: $default_theme
-  use_grid_icons: true
-  footer_mode: "25" # always, never, number_of_rows, auto
+  footer_mode: auto # always, never, number_of_rows, auto
   # animate_prompt: false # redraw the prompt every second
   float_precision: 2
   use_ansi_coloring: true
@@ -106,10 +108,7 @@ $env.config = {
       completer: null # check 'carapace_completer' above as an example
     }
   }
-  filesize: {
-    metric: true # true => KB, MB, GB (ISO standard), false => KiB, MiB, GiB (Windows standard)
-    format: "auto" # b, kb, kib, mb, mib, gb, gib, tb, tib, pb, pib, eb, eib, zb, zib, auto
-  }
+
   # menu_config: {
   #   columns: 4
   #   col_width: 20   # Optional value. If missing all the screen width is used to calculate column width

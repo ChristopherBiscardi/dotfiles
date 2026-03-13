@@ -25,21 +25,23 @@
 # let-env PROMPT_INDICATOR_VI_NORMAL = { "〉" }
 # let-env PROMPT_MULTILINE_INDICATOR = { "::: " }
 
-
 $env.PATH = ([$env.PATH, [
-  "/Users/chris/.volta/bin",
+  # "/Users/chris/.volta/bin",
   "/Users/chris/.cargo/bin",
   "/opt/homebrew/bin",
   "/Library/TeX/texbin",
   "/Library/Apple/usr/bin",
-  "/usr/local/bin"
+  "/usr/local/bin",
+  "/Applications/Blender.app/Contents/MacOS/",
+  "/Users/chris/bin",
+  # .local/bin is for pipx
+  "/Users/chris/.local/bin"
 ]] | flatten)
-
 
 $env.EDITOR = "code -w"
 # $env.LC_ALL = "en_US.UTF-8"
 # $env.LSCOLORS = "Gxfxcxdxbxegedabagacad"
-$env.VOLTA_HOME = "/Users/chris/.volta"
+# $env.VOLTA_HOME = "/Users/chris/.volta"
 
 # mkdir ~/.cache/starship
 # starship init nu | save ~/.cache/starship/init.nu
