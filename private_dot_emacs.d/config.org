@@ -1,0 +1,469 @@
+#+TITLE: emacs 2024+
+#+AUTHOR: Chris Biscardi
+* Misc
+#+begin_src emacs-lisp
+  (setq auto-save-file-name-transforms
+    `((".*" "~/.emacs-saves/" t)))
+#+end_src
+* Faces
+#+begin_src emacs-lisp
+    (set-face-attribute 'default nil :family "MesloLGLDZ Nerd Font")
+#+end_src
+* Elpaca
+package management for emacs
+#+BEGIN_SRC emacs-lisp
+  (defvar elpaca-installer-version 0.11)
+  (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
+  (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
+  (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
+  (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
+                                :ref nil :depth 1 :inherit ignore
+                                :files (:defaults "elpaca-test.el" (:exclude "extensions"))
+                                :build (:not elpaca--activate-package)))
+  (let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
+         (build (expand-file-name "elpaca/" elpaca-builds-directory))
+         (order (cdr elpaca-order))
+         (default-directory repo))
+    (add-to-list 'load-path (if (file-exists-p build) build repo))
+    (unless (file-exists-p repo)
+      (make-directory repo t)
+      (when (<= emacs-major-version 28) (require 'subr-x))
+      (condition-case-unless-debug err
+          (if-let* ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+                    ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
+                                                    ,@(when-let* ((depth (plist-get order :depth)))
+                                                        (list (format "--depth=%d" depth) "--no-single-branch"))
+                                                    ,(plist-get order :repo) ,repo))))
+                    ((zerop (call-process "git" nil buffer t "checkout"
+                                          (or (plist-get order :ref) "--"))))
+                    (emacs (concat invocation-directory invocation-name))
+                    ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+                                          "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+                    ((require 'elpaca))
+                    ((elpaca-generate-autoloads "elpaca" repo)))
+              (progn (message "%s" (buffer-string)) (kill-buffer buffer))
+            (error "%s" (with-current-buffer buffer (buffer-string))))
+        ((error) (warn "%s" err) (delete-directory repo 'recursive))))
+    (unless (require 'elpaca-autoloads nil t)
+      (require 'elpaca)
+      (elpaca-generate-autoloads "elpaca" repo)
+      (let ((load-source-file-function nil)) (load "./elpaca-autoloads"))))
+  (add-hook 'after-init-hook #'elpaca-process-queues)
+  (elpaca `(,@elpaca-order))
+  ;; (defvar elpaca-installer-version 0.9)
+  ;; (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
+  ;; (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
+  ;; (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
+  ;; (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
+  ;; 				:ref nil :depth 1 :inherit ignore
+  ;; 				:files (:defaults "elpaca-test.el" (:exclude "extensions"))
+  ;; 				:build (:not elpaca--activate-package)))
+  ;; (let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
+  ;; 	 (build (expand-file-name "elpaca/" elpaca-builds-directory))
+  ;; 	 (order (cdr elpaca-order))
+  ;; 	 (default-directory repo))
+  ;;   (add-to-list 'load-path (if (file-exists-p build) build repo))
+  ;;   (unless (file-exists-p repo)
+  ;;     (make-directory repo t)
+  ;;     (when (< emacs-major-version 28) (require 'subr-x))
+  ;;     (condition-case-unless-debug err
+  ;; 	  (if-let* ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+  ;; 		    ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
+  ;; 						    ,@(when-let* ((depth (plist-get order :depth)))
+  ;; 							(list (format "--depth=%d" depth) "--no-single-branch"))
+  ;; 						    ,(plist-get order :repo) ,repo))))
+  ;; 		    ((zerop (call-process "git" nil buffer t "checkout"
+  ;; 					  (or (plist-get order :ref) "--"))))
+  ;; 		    (emacs (concat invocation-directory invocation-name))
+  ;; 		    ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+  ;; 					  "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+  ;; 		    ((require 'elpaca))
+  ;; 		    ((elpaca-generate-autoloads "elpaca" repo)))
+  ;; 	      (progn (message "%s" (buffer-string)) (kill-buffer buffer))
+  ;; 	    (error "%s" (with-current-buffer buffer (buffer-string))))
+  ;; 	((error) (warn "%s" err) (delete-directory repo 'recursive))))
+  ;;   (unless (require 'elpaca-autoloads nil t)
+  ;;     (require 'elpaca)
+  ;;     (elpaca-generate-autoloads "elpaca" repo)
+  ;;     (load "./elpaca-autoloads")))
+  ;; (add-hook 'after-init-hook #'elpaca-process-queues)
+  ;; (elpaca `(,@elpaca-order))
+#+END_SRC
+** Elpaca use-package
+Install use-package support
+#+BEGIN_SRC emacs-lisp
+  (elpaca elpaca-use-package
+    ;; Enable :elpaca use-package keyword.
+    (elpaca-use-package-mode)
+    ;; Assume :elpaca t unless otherwise specified.
+    (setq elpaca-use-package-by-default t))
+  (elpaca-wait)
+#+END_SRC
+* UI
+#+BEGIN_SRC emacs-lisp
+  (menu-bar-mode t)
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
+#+END_SRC
+* Fonts
+#+begin_src emacs-lisp
+  (use-package nerd-icons
+    :custom
+    (nerd-icons-font-family "MesloLGLDZ Nerd Font")
+  )
+#+end_src
+* Catpuccin
+#+BEGIN_SRC emacs-lisp
+  (use-package night-owl-theme
+    :config (load-theme 'night-owl :no-confirm)
+  )
+  ; (use-package catppuccin-theme
+  ; :config (load-theme 'catppuccin :no-confirm)
+  ; )
+#+END_SRC
+* Org
+#+BEGIN_SRC emacs-lisp
+  (use-package org-modern
+    :after org
+    :config
+    (global-org-modern-mode)
+    (set-face-attribute 'org-modern-symbol nil :family "Iosevka"))
+  (setq org-startup-folded "overview")
+
+#+END_SRC
+* Dashboard
+#+begin_src emacs-lisp
+  (use-package dashboard
+    :ensure t
+    :config
+    (add-hook 'elpaca-after-init-hook #'dashboard-insert-startupify-lists)
+    (add-hook 'elpaca-after-init-hook #'dashboard-initialize)
+    (dashboard-setup-startup-hook))
+  (setq
+      ;; show dashboard when connecting via client
+      initial-buffer-choice (lambda () (get-buffer-create "*dashboard*"))
+      ;; configure dashboard
+      dashboard-startup-banner "~/.emacs.d/cuddlyferris-smol.png"
+      dashboard-banner-logo-title "Rust Adventure Dashboard"
+      ;; To use nerd-icons package:
+      dashboard-display-icons-p t ;; display icons on both GUI and terminal
+      dashboard-icon-type 'nerd-icons ;; use `nerd-icons' package
+      ;; To add icons to the widget headings and their items:
+      dashboard-set-heading-icons t
+      dashboard-set-file-icons t
+      dashboard-init-info ""
+      dashboard-set-footer nil
+      dashboard-footer-messages '("testing")
+  )
+  ;; more configuration available
+  ;; https://github.com/emacs-dashboard/emacs-dashboard
+#+end_src
+* Avy
+#+begin_src emacs-lisp
+  (use-package avy
+    :ensure t
+    :config
+    (global-set-key (kbd "C-:") 'avy-goto-char)
+  )
+#+end_src
+* Vertico
+#+begin_src emacs-lisp
+  (use-package vertico
+    :init
+    (vertico-mode)
+
+    ;; Different scroll margin
+    ;; (setq vertico-scroll-margin 0)
+
+    ;; Show more candidates
+    ;; (setq vertico-count 20)
+
+    ;; Grow and shrink the Vertico minibuffer
+    ;; (setq vertico-resize t)
+
+    ;; Optionally enable cycling for `vertico-next' and `vertico-previous'.
+    ;; (setq vertico-cycle t)
+    )
+
+  ;; Persist history over Emacs restarts. Vertico sorts by history position.
+  (use-package savehist
+    :ensure nil
+    :init
+    (savehist-mode))
+
+  ;; A few more useful configurations...
+  (use-package emacs
+    :ensure nil
+    :init
+    ;; Add prompt indicator to `completing-read-multiple'.
+    ;; We display [CRM<separator>], e.g., [CRM,] if the separator is a comma.
+    (defun crm-indicator (args)
+      (cons (format "[CRM%s] %s"
+		    (replace-regexp-in-string
+		     "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
+		     crm-separator)
+		    (car args))
+	    (cdr args)))
+    (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
+
+    ;; Do not allow the cursor in the minibuffer prompt
+    (setq minibuffer-prompt-properties
+	  '(read-only t cursor-intangible t face minibuffer-prompt))
+    (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+
+    ;; Emacs 28: Hide commands in M-x which do not work in the current mode.
+    ;; Vertico commands are hidden in normal buffers.
+    ;; (setq read-extended-command-predicate
+    ;;       #'command-completion-default-include-p)
+
+    ;; Enable recursive minibuffers
+    (setq enable-recursive-minibuffers t))
+#+end_src
+* Orderless
+#+begin_src emacs-lisp
+  (use-package orderless
+    :init
+    ;; Configure a custom style dispatcher (see the Consult wiki)
+    ;; (setq orderless-style-dispatchers '(+orderless-consult-dispatch orderless-affix-dispatch)
+    ;;       orderless-component-separator #'orderless-escapable-split-on-space)
+    (setq completion-styles '(substring orderless basic)
+	  completion-category-defaults nil
+	  completion-category-overrides '((file (styles partial-completion)))))
+#+end_src
+* Marginalia
+#+begin_src emacs-lisp
+  (use-package marginalia
+    ;; Bind `marginalia-cycle' locally in the minibuffer.  To make the binding
+    ;; available in the *Completions* buffer, add it to the
+    ;; `completion-list-mode-map'.
+    :bind (:map minibuffer-local-map
+	   ("M-A" . marginalia-cycle))
+
+    ;; The :init section is always executed.
+    :init
+
+    ;; Marginalia must be activated in the :init section of use-package such that
+    ;; the mode gets enabled right away. Note that this forces loading the
+    ;; package.
+    (marginalia-mode))
+#+end_src
+* Embark
+#+begin_src emacs-lisp
+  (use-package embark
+    :ensure t
+
+    :bind
+    (("C-." . embark-act)         ;; pick some comfortable binding
+     ("C-;" . embark-dwim)        ;; good alternative: M-.
+     ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
+
+    :init
+
+    ;; Optionally replace the key help with a completing-read interface
+    (setq prefix-help-command #'embark-prefix-help-command)
+
+    ;; Show the Embark target at point via Eldoc. You may adjust the
+    ;; Eldoc strategy, if you want to see the documentation from
+    ;; multiple providers. Beware that using this can be a little
+    ;; jarring since the message shown in the minibuffer can be more
+    ;; than one line, causing the modeline to move up and down:
+
+    ;; (add-hook 'eldoc-documentation-functions #'embark-eldoc-first-target)
+    ;; (setq eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
+
+    :config
+
+    ;; Hide the mode line of the Embark live/completions buffers
+    (add-to-list 'display-buffer-alist
+		 '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+		   nil
+		   (window-parameters (mode-line-format . none)))))
+#+end_src
+* Corfu
+#+begin_src emacs-lisp
+  (use-package corfu
+    ;; Optional customizations
+    ;; :custom
+    ;; (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+    ;; (corfu-auto t)                 ;; Enable auto completion
+    ;; (corfu-separator ?\s)          ;; Orderless field separator
+    ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
+    ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
+    ;; (corfu-preview-current nil)    ;; Disable current candidate preview
+    ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
+    ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
+    ;; (corfu-scroll-margin 5)        ;; Use scroll margin
+
+    ;; Enable Corfu only for certain modes.
+    ;; :hook ((prog-mode . corfu-mode)
+    ;;        (shell-mode . corfu-mode)
+    ;;        (eshell-mode . corfu-mode))
+
+    ;; Recommended: Enable Corfu globally.  This is recommended since Dabbrev can
+    ;; be used globally (M-/).  See also the customization variable
+    ;; `global-corfu-modes' to exclude certain modes.
+    :init
+    (global-corfu-mode))
+
+  ;; A few more useful configurations...
+  (use-package emacs
+    :ensure nil
+    :init
+    ;; TAB cycle if there are only few candidates
+    (setq completion-cycle-threshold 3)
+
+    ;; Emacs 28: Hide commands in M-x which do not apply to the current mode.
+    ;; Corfu commands are hidden, since they are not supposed to be used via M-x.
+    ;; (setq read-extended-command-predicate
+    ;;       #'command-completion-default-include-p)
+
+    ;; Enable indentation+completion using the TAB key.
+    ;; `completion-at-point' is often bound to M-TAB.
+    (setq tab-always-indent 'complete))
+#+end_src
+* Rainbow Mode
+#+begin_src emacs-lisp
+  (use-package rainbow-mode
+    :hook org-mode
+  )
+  ;; draw colors when hexes are written: #1fa9f4
+#+end_src
+* Rainbow Delimiters
+#+begin_src emacs-lisp
+  (use-package rainbow-delimiters
+    :hook emacs-lisp-mode
+  )
+#+end_src
+* visual-regexp
+#+begin_src emacs-lisp
+  (use-package visual-regexp
+    :defer
+  )
+  (use-package visual-regexp-steroids
+    :bind (("C-c r" . 'vr/replace)
+	   ("C-c q" . 'vr/query-replace)
+	   ("C-c m" . 'vr/mc-mark)
+	   ("C-r" . 'vr/isearch-backend)
+	   ("C-s" . 'vr/isearch-forward))
+    :config
+    ;;(setq vr/command-python "python3 ~/.emacs.d/elpaca/builds/visual-regexp-steroids/regexp.py")
+    (setq vr/engine 'emacs-plain)
+  )
+#+end_src
+* Multiple Cursors
+#+begin_src emacs-lisp
+  (use-package multiple-cursors
+    :bind (
+	   ("C-S-c C-S-c" . 'mc/edit-lines)
+	   ("C->" . 'mc/mark-next-like-this)
+	   ("C-<" . 'mc/mark-previous-like-this)
+	   ("C-c C-<" . 'mc/mark-all-like-this)
+    )
+  )
+#+end_src
+* Magit
+#+begin_src emacs-lisp
+  (use-package transient)
+  (use-package magit)
+  ;; (use-package forge
+  ;;   :after magit
+  ;; )
+
+#+end_src
+* wgrep
+#+begin_src emacs-lisp
+  (use-package wgrep)
+#+end_src
+* Deadgrep
+#+begin_src emacs-lisp
+  (use-package deadgrep)
+#+end_src
+* tree-sitter
+#+begin_src emacs-lisp
+  (use-package treesit
+    :init
+    (setq treesit-extra-load-path '("/Users/chris/github/casouri/tree-sitter-module/dist"))
+    :ensure nil
+  )
+#+end_src
+* Markdown
+#+begin_src emacs-lisp
+  (use-package markdown-mode
+    :ensure t
+    :mode ("README\\.md\\'" . gfm-mode)
+    :init (setq markdown-command "pandoc")
+    :config (setq markdown-spaces-after-code-fence 0)
+  )
+#+end_src
+* rust-mode
+#+begin_src emacs-lisp
+  (use-package rust-mode
+    :init
+    (setq rust-format-on-save t
+	  rust-mode-treesitter-derive t
+    )
+    :hook (rust-mode .
+	    (lambda () (setq indent-tabs-mode nil)))
+  )
+
+#+end_src
+* typst tinymist
+#+begin_src emacs-lisp
+  (with-eval-after-load 'eglot
+    (with-eval-after-load 'typst-ts-mode
+      (add-to-list 'eglot-server-programs
+		   `((typst-ts-mode) .
+		     ,(eglot-alternatives `(,typst-ts-lsp-download-path
+					    "tinymist"
+					    "typst-lsp"))))))
+  (use-package typst-ts-mode
+    :ensure (:host codeberg :repo "meow_king/typst-ts-mode"))
+
+#+end_src
+* edit-indirect
+#+begin_src emacs-lisp
+  (use-package edit-indirect)
+#+end_src
+* auto-revert-mode
+#+begin_src emacs-lisp
+;; Automatically revert unmodified buffers on file change
+(global-auto-revert-mode 1)
+#+end_src
+* Tags
+#+begin_src emacs-lisp
+  (setq org-todo-keywords
+	'((sequence
+	   ; states that need action
+	   "TODO(t)"
+	   "BACKLOG.lol.lmao.(b)"
+	   "IN_PROGRESS(p)"
+	   "WAITING(w)"
+	   "|"
+	   ; states that don't need more action
+	   "DONE(d)"
+	   "CANCELLED(c)"
+	   )))
+
+  (setq org-tag-alist '(
+    (:startgroup . nil)
+      ("bevy" . ?b)
+      ("embedded" . ?e)
+      ("advent-of-code-2024" . ?a)
+      ("leptos" . ?l)
+      ("rust-release" . ?r)
+      ("tauri" . ?t)
+      ("wasm" . ?w)
+      ("wgpu" . ?w)
+    (:endgroup . nil)
+    ;; (:startgroup . nil)
+    ;;   ("@errands" . ?e)
+    ;;   ("@house" . ?s)
+    ;;   ("@now" . ?n)
+    ;;   ("@online" . ?o)
+    ;;   ("@phone" . ?p)
+    ;;   ("@campus" . ?c)
+    ;;   ("@office" . ?f)
+    ;; (:endgroup . nil)
+  ))
+
+#+end_src
